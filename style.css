@@ -150,3 +150,10 @@ form .btn { margin-top: 1rem; }
 @media (max-width: 760px) { .consent { bottom: 4.6rem; } }
 .send.tg { background: #229ed9; }
 .send[hidden] { display: none; }
+
+.send { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; }
+.si { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.send-btns { grid-template-columns: repeat(3, 1fr); }
+.send.tg { grid-column: 1 / -1; padding: 1rem; font-size: 1.05rem; color: #fff; }
+.send.tg[hidden] { display: none; }
+@media (max-width: 420px) { .send-btns { grid-template-columns: 1fr; } }
