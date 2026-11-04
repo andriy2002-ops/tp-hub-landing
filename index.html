@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <!-- TODO: замініть заголовок і опис -->
+  <title>Імʼя Прізвище — веб-розробник</title>
+  <meta name="description" content="Сайт-візитка: допомагаю створювати зручні та швидкі сайти.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Перейти до змісту</a>
+
+  <header class="site-header">
+    <div class="container bar">
+      <a class="logo" href="#top">Імʼя.</a> <!-- TODO: ваш логотип або імʼя -->
+      <nav aria-label="Основна навігація">
+        <ul>
+          <li><a href="#about">Про мене</a></li>
+          <li><a href="#benefits">Переваги</a></li>
+          <li><a href="#contacts">Контакти</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="container">
+        <!-- TODO: головний заголовок і підзаголовок -->
+        <h1 id="hero-title">Створюю сайти, які приносять клієнтів</h1>
+        <p class="lead">Швидко, зрозуміло й за помірну ціну. Розкажіть про ваш проєкт — і я запропоную рішення.</p>
+        <!-- TODO: текст і посилання кнопки -->
+        <a class="btn" href="#contacts">Звʼязатися</a>
+      </div>
+    </section>
+
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="container about">
+        <!-- TODO: замініть фото на своє (наприклад, photo.jpg) і опишіть alt -->
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%234f46e5'/%3E%3Ccircle cx='100' cy='80' r='36' fill='%23fff'/%3E%3Cpath d='M30 180c8-40 40-58 70-58s62 18 70 58z' fill='%23fff'/%3E%3C/svg%3E"
+             alt="Портрет-заглушка: замініть на своє фото" width="200" height="200">
+        <div>
+          <h2 id="about-title">Про мене</h2>
+          <!-- TODO: коротка розповідь про себе або послугу -->
+          <p>Мене звати Імʼя. Я маю понад N років досвіду в сфері X. Допомагаю малому бізнесу та приватним особам отримати якісний результат без зайвих складнощів.</p>
+          <p>Працюю прозоро: чіткі строки, зрозуміла ціна, регулярний звʼязок.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="benefits" aria-labelledby="benefits-title">
+      <div class="container">
+        <h2 id="benefits-title">Чому обирають мене</h2>
+        <ul class="cards">
+          <!-- TODO: замініть три переваги -->
+          <li class="card">
+            <h3>Швидко</h3>
+            <p>Перший результат уже за кілька днів, а не тижнів.</p>
+          </li>
+          <li class="card">
+            <h3>Прозоро</h3>
+            <p>Фіксована ціна та чіткий план робіт до початку співпраці.</p>
+          </li>
+          <li class="card">
+            <h3>Надійно</h3>
+            <p>Підтримка після запуску і відповіді на запитання без черг.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="contacts" aria-labelledby="contacts-title">
+      <div class="container narrow">
+        <h2 id="contacts-title">Контакти</h2>
+        <p>Заповніть форму — відкриється ваш поштовий застосунок із готовим листом.</p>
+        <!-- TODO: email отримувача задається в script.js (RECIPIENT) і тут як запасний варіант -->
+        <form id="contact-form" action="mailto:hello@example.com" method="post" enctype="text/plain">
+          <label for="name">Імʼя</label>
+          <input id="name" name="name" type="text" autocomplete="name" required>
+
+          <label for="email">Ваш email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+
+          <label for="message">Повідомлення</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+
+          <button class="btn" type="submit">Надіслати</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <!-- TODO: ваше імʼя та посилання на соцмережі -->
+      <p>&copy; <span id="year">2026</span> Імʼя Прізвище. Усі права захищено.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
