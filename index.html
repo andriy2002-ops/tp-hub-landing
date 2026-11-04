@@ -167,10 +167,12 @@
           <input id="contact" name="contact" type="text" autocomplete="email" required>
           <label for="message">Тип вантажу, об'єм, одержувачі, напрямки</label>
           <textarea id="message" name="message" rows="4" required></textarea>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
           <p class="send-title">Надіслати запит через:</p>
           <div class="send-btns">
             <button class="send wa" type="button" data-channel="whatsapp">WhatsApp</button>
             <button class="send vb" type="button" data-channel="viber">Viber</button>
+            <button class="send tg" type="button" data-channel="telegram" hidden>Надіслати зараз</button>
             <button class="send em" type="button" data-channel="email">Email</button>
           </div>
           <p class="form-status" id="form-status" role="status" aria-live="polite"></p>

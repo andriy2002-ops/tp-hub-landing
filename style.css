@@ -124,7 +124,7 @@ form .btn { margin-top: 1rem; }
 
 /* Кнопки месенджерів */
 .send-title { margin: 1rem 0 .25rem; font-weight: 600; font-size: .9rem; }
-.send-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+.send-btns { display: grid; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); gap: .6rem; }
 .send { padding: .8rem .5rem; border: 0; border-radius: 10px; color: #fff; font: inherit; font-weight: 700; cursor: pointer; transition: transform .15s, filter .15s; }
 .send:hover { transform: translateY(-2px); filter: brightness(1.08); }
 .send.wa { background: #25d366; color: #06311a; }
@@ -148,3 +148,5 @@ form .btn { margin-top: 1rem; }
 .consent a { color: #ffb374; }
 .consent .btn { padding: .5rem 1rem; box-shadow: none; }
 @media (max-width: 760px) { .consent { bottom: 4.6rem; } }
+.send.tg { background: #229ed9; }
+.send[hidden] { display: none; }

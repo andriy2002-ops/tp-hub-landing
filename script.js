@@ -4,6 +4,8 @@ document.getElementById('year').textContent = new Date().getFullYear();
 // Куди надсилати запити
 const PHONE = '380673524745';
 const EMAIL = 'brokgroup1@gmail.com';
+// Адреса Cloudflare Worker (див. telegram-worker/README.md). Порожньо = кнопка «Надіслати зараз» прихована.
+const TELEGRAM_ENDPOINT = '';
 
 // ===== Реклама й аналітика =====
 // Вставте свої ID. Порожнє значення = інструмент вимкнено.
@@ -71,6 +73,7 @@ document.getElementById('consent-no').addEventListener('click', () => setConsent
 
 const form = document.getElementById('contact-form');
 const status = document.getElementById('form-status');
+if (TELEGRAM_ENDPOINT) form.querySelector('[data-channel=telegram]').hidden = false;
 
 function buildText() {
   const f = form.elements;
@@ -93,7 +96,22 @@ form.addEventListener('click', async (e) => {
   const channel = btn.dataset.channel;
   trackLead(channel);
 
-  if (channel === 'whatsapp') {
+  if (channel === 'telegram') {
+    btn.disabled = true; status.textContent = 'Надсилаємо...';
+    try {
+      const f = form.elements;
+      const res = await fetch(TELEGRAM_ENDPOINT, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: f.name.value, contact: f.contact.value, message: f.message.value, source: sourceInfo(), website: f.website.value })
+      });
+      if (!res.ok) throw new Error(res.status);
+      status.textContent = 'Дякуємо! Запит надіслано, ми зв\'яжемося з вами найближчим часом.';
+      form.reset();
+    } catch (_) {
+      status.textContent = 'Не вдалося надіслати. Скористайтеся WhatsApp, Viber або Email, або зателефонуйте: +380 67 352 47 45.';
+    }
+    btn.disabled = false;
+  } else if (channel === 'whatsapp') {
     window.open('https://wa.me/' + PHONE + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
     status.textContent = 'Відкриваємо WhatsApp. Натисніть «Надіслати» в чаті.';
   } else if (channel === 'viber') {
