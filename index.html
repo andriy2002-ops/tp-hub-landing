@@ -128,18 +128,7 @@
         <p class="kicker">Калькулятор</p>
         <h2 id="calc-title">Орієнтовна вартість послуг</h2>
         <p class="sub">Вкажіть обсяги, і ви одразу побачите приблизну суму. Остаточна ціна фіксується в договорі.</p>
-        <div class="calc" id="calc">
-          <div class="calc-inputs" id="calc-rows"></div>
-          <aside class="calc-result" aria-live="polite">
-            <h3>Ваш розрахунок</h3>
-            <ul class="calc-lines" id="calc-lines"></ul>
-            <div class="calc-total" id="calc-total"></div>
-            <label class="calc-vat"><input type="checkbox" id="calc-vat"> Показати з ПДВ 20%</label>
-            <button class="btn" type="button" id="calc-contract" disabled>Скласти договір</button>
-            <button class="btn ghost-dark" type="button" id="calc-message" disabled>Надіслати розрахунок у запиті</button>
-            <p class="calc-note">Ціни орієнтовні, у гривнях. Обробка поверхонь та інші операції — за погодженням.</p>
-          </aside>
-        </div>
+        <div id="calc"></div>
       </div>
     </section>
 
@@ -223,7 +212,7 @@
   <footer class="site-footer">
     <div class="container">
       <p>&copy; <span id="year">2026</span> Розподільчий логістичний комплекс, Тернопіль</p>
-      <p>Прийняли. Розподілили. Доставили. &bull; <a href="contract.html">Сформувати договір</a> &bull; <a href="privacy.html">Політика конфіденційності</a></p>
+      <p>Прийняли. Розподілили. Доставили. &bull; <a href="cabinet.html">Кабінет клієнта</a> &bull; <a href="contract.html">Сформувати договір</a> &bull; <a href="privacy.html">Політика конфіденційності</a></p>
     </div>
   </footer>
 
@@ -237,8 +226,9 @@
     <div><button type="button" id="consent-yes" class="btn">Прийняти</button> <button type="button" id="consent-no" class="btn ghost">Відхилити</button></div>
   </div>
 
-  <script src="prices.js?v=9"></script>
-  <script src="calc.js?v=9"></script>
+  <script src="prices.js?v=10"></script>
+  <script src="calc-core.js?v=10"></script>
+  <script src="calc.js?v=10"></script>
   <script src="script.js?v=9"></script>
 </body>
 </html>
