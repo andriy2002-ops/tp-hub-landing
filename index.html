@@ -18,7 +18,9 @@
   {"@context":"https://schema.org","@type":"LocalBusiness","name":"Розподільчий логістичний комплекс","description":"Прийом, зберігання, розподіл і доставка вантажів по Україні. Хаб у Тернополі, 24/7.","url":"https://andriy2002-ops.github.io/tp-hub-landing/","telephone":"+380673524745","email":"brokgroup1@gmail.com","image":"https://andriy2002-ops.github.io/tp-hub-landing/img/warehouse.jpg","address":{"@type":"PostalAddress","addressLocality":"Тернопіль","addressCountry":"UA"},"openingHours":"Mo-Su 00:00-23:59","areaServed":"UA"}
   </script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23ff7a1a'/%3E%3Ctext x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3EР%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="preload" as="image" href="img/warehouse.jpg">
+  <link rel="stylesheet" href="style.css?v=8">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Які вантажі та транспорт ви приймаєте?", "acceptedAnswer": {"@type": "Answer", "text": "Приймаємо 20- і 40-футові контейнери, контейнеровози та фури 80–120 м³. Партії будь-яких розмірів."}}, {"@type": "Question", "name": "Чи працюєте ви цілодобово?", "acceptedAnswer": {"@type": "Answer", "text": "Так, хаб у Тернополі працює 24/7 в автономному режимі."}}, {"@type": "Question", "name": "Які операції ви виконуєте з вантажем?", "acceptedAnswer": {"@type": "Answer", "text": "Крос-докінг і транзитне перевантаження, відповідальне зберігання, пакування та перепакування, маркування і зважування, обробка поверхонь. Інші операції — за погодженням."}}, {"@type": "Question", "name": "Чи доставляєте ви по Україні?", "acceptedAnswer": {"@type": "Answer", "text": "Так. Доставляємо по всій Україні: власний електричний фургон для адресної доставки та відповідний транспорт для кожної партії."}}, {"@type": "Question", "name": "Скільки вантажу можна зберігати?", "acceptedAnswer": {"@type": "Answer", "text": "Складський об'єм — 3500 м³, до 200 європалет на стелажах, висота складу до 6 м. Є вільні складські площі."}}, {"@type": "Question", "name": "Як отримати розрахунок?", "acceptedAnswer": {"@type": "Answer", "text": "Надішліть тип вантажу, об'єм, кількість одержувачів і напрямки через форму нижче, у WhatsApp, Viber, Telegram або по телефону +380 67 352 47 45. Підготуємо варіант обробки та доставки."}}]}</script>
 </head>
 <body>
   <a class="skip" href="#main">Перейти до змісту</a>
@@ -26,12 +28,14 @@
   <header class="site-header">
     <div class="container bar">
       <a class="logo" href="#top"><span class="mark">Р</span><span>РЛК <b>Тернопіль</b></span></a>
-      <nav aria-label="Основна навігація">
+      <button class="burger" id="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+      <nav id="menu" aria-label="Основна навігація">
         <ul>
           <li><a href="#about">Для кого</a></li>
           <li><a href="#process">Процес</a></li>
           <li><a href="#capacity">Склад</a></li>
           <li><a href="#services">Послуги</a></li>
+          <li><a href="#faq">Питання</a></li>
           <li><a href="#contacts">Контакти</a></li>
         </ul>
       </nav>
@@ -62,7 +66,7 @@
       </dl>
     </div>
 
-    <section class="section bg bg-container" id="about" aria-labelledby="about-title">
+    <section data-reveal class="section bg bg-container" id="about" aria-labelledby="about-title">
       <div class="container">
         <p class="kicker">Для кого</p>
         <h2 id="about-title">Хаб для тих, кому потрібно швидко й точно розподілити вантаж</h2>
@@ -83,7 +87,7 @@
       </div>
     </section>
 
-    <section class="section dark bg bg-truck" id="process" aria-labelledby="process-title">
+    <section data-reveal class="section dark bg bg-truck" id="process" aria-labelledby="process-title">
       <div class="container split">
         <div>
           <p class="kicker">Процес</p>
@@ -100,7 +104,7 @@
       </div>
     </section>
 
-    <section class="section" id="capacity" aria-labelledby="capacity-title">
+    <section data-reveal class="section" id="capacity" aria-labelledby="capacity-title">
       <div class="container split rev">
         <img class="shot" src="img/warehouse2.jpg" alt="Склад: стелажі та вільні складські площі" loading="lazy" width="1200" height="900">
         <div>
@@ -118,7 +122,7 @@
       </div>
     </section>
 
-    <section class="section alt bg bg-warehouse" id="services" aria-labelledby="services-title">
+    <section data-reveal class="section alt bg bg-warehouse" id="services" aria-labelledby="services-title">
       <div class="container">
         <p class="kicker">Послуги</p>
         <h2 id="services-title">Усе необхідне в одному місці</h2>
@@ -133,7 +137,7 @@
       </div>
     </section>
 
-    <section class="section dark bg bg-van" id="delivery" aria-labelledby="delivery-title">
+    <section data-reveal class="section dark bg bg-van" id="delivery" aria-labelledby="delivery-title">
       <div class="container split rev">
         <img class="shot" src="img/map.jpg" alt="Карта України з маршрутами доставки з хабу в Тернополі" loading="lazy" width="1200" height="675">
         <div>
@@ -148,7 +152,21 @@
       </div>
     </section>
 
-    <section class="section bg bg-contact" id="contacts" aria-labelledby="contacts-title">
+    <section data-reveal class="section alt" id="faq" aria-labelledby="faq-title">
+      <div class="container narrow">
+        <p class="kicker">Питання</p>
+        <h2 id="faq-title">Часті запитання</h2>
+        <details class="qa"><summary>Які вантажі та транспорт ви приймаєте?</summary><p>Приймаємо 20- і 40-футові контейнери, контейнеровози та фури 80–120 м³. Партії будь-яких розмірів.</p></details>
+          <details class="qa"><summary>Чи працюєте ви цілодобово?</summary><p>Так, хаб у Тернополі працює 24/7 в автономному режимі.</p></details>
+          <details class="qa"><summary>Які операції ви виконуєте з вантажем?</summary><p>Крос-докінг і транзитне перевантаження, відповідальне зберігання, пакування та перепакування, маркування і зважування, обробка поверхонь. Інші операції — за погодженням.</p></details>
+          <details class="qa"><summary>Чи доставляєте ви по Україні?</summary><p>Так. Доставляємо по всій Україні: власний електричний фургон для адресної доставки та відповідний транспорт для кожної партії.</p></details>
+          <details class="qa"><summary>Скільки вантажу можна зберігати?</summary><p>Складський об'єм — 3500 м³, до 200 європалет на стелажах, висота складу до 6 м. Є вільні складські площі.</p></details>
+          <details class="qa"><summary>Як отримати розрахунок?</summary><p>Надішліть тип вантажу, об'єм, кількість одержувачів і напрямки через форму нижче, у WhatsApp, Viber, Telegram або по телефону +380 67 352 47 45. Підготуємо варіант обробки та доставки.</p></details>
+          
+      </div>
+    </section>
+
+    <section data-reveal class="section bg bg-contact" id="contacts" aria-labelledby="contacts-title">
       <div class="container contact-box">
         <div>
           <p class="kicker">Контакти</p>
@@ -198,6 +216,6 @@
     <div><button type="button" id="consent-yes" class="btn">Прийняти</button> <button type="button" id="consent-no" class="btn ghost">Відхилити</button></div>
   </div>
 
-  <script src="script.js?v=7"></script>
+  <script src="script.js?v=8"></script>
 </body>
 </html>

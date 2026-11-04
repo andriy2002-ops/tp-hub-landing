@@ -157,3 +157,29 @@ form .btn { margin-top: 1rem; }
 .send.tg { grid-column: 1 / -1; padding: 1rem; font-size: 1.05rem; color: #fff; }
 .send.tg[hidden] { display: none; }
 @media (max-width: 420px) { .send-btns { grid-template-columns: 1fr; } }
+
+/* Меню на телефоні */
+.burger { display: none; width: 2.5rem; height: 2.5rem; padding: .6rem; background: transparent; border: 1px solid rgba(255,255,255,.25); border-radius: 10px; cursor: pointer; flex-direction: column; justify-content: space-between; }
+.burger span { display: block; height: 2px; background: #fff; border-radius: 2px; transition: transform .2s, opacity .2s; }
+.burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+@media (max-width: 900px) {
+  .burger { display: flex; margin-left: auto; }
+  nav { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--navy); border-bottom: 1px solid rgba(255,255,255,.1); }
+  nav.open { display: block; }
+  nav ul { flex-direction: column; gap: 0; padding: .5rem 1.25rem 1rem; }
+  nav a { display: block; padding: .8rem 0; font-size: 1.05rem; }
+}
+/* FAQ */
+.narrow { max-width: 48rem; }
+.qa { background: #fff; border: 1px solid var(--border); border-radius: 12px; margin-bottom: .75rem; }
+.qa summary { cursor: pointer; padding: 1rem 3rem 1rem 1.25rem; font-weight: 600; list-style: none; position: relative; }
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary::after { content: "+"; position: absolute; right: 1.25rem; top: .7rem; font-size: 1.5rem; color: var(--accent-d); }
+.qa[open] summary::after { content: "\2212"; }
+.qa p { margin: 0; padding: 0 1.25rem 1.1rem; color: var(--muted); }
+/* Поява блоків */
+.js [data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+.js [data-reveal].in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .js [data-reveal] { opacity: 1; transform: none; transition: none; } }
