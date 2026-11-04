@@ -1,4 +1,3 @@
-/* TODO: змініть кольори в змінних нижче */
 :root {
   --bg: #ffffff;
   --bg-alt: #f3f4f8;
@@ -77,7 +76,7 @@ h2 { font-size: 1.75rem; margin: 0 0 1rem; }
 .checks { list-style: none; padding: 0; margin: 0; }
 .checks li { padding: .5rem 0 .5rem 1.75rem; position: relative; border-bottom: 1px solid var(--border); }
 .checks li::before { content: "\2713"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
-.photo { margin-top: 1.5rem; height: 160px; border-radius: var(--radius); background: linear-gradient(135deg, var(--accent), var(--bg-alt)); }
+.photo { display: block; margin-top: 1.5rem; width: 100%; height: auto; border-radius: var(--radius); }
 .contact-list { list-style: none; padding: 0; font-weight: 600; }
 .card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
 .card h3 { margin: 0 0 .5rem; }
@@ -103,3 +102,8 @@ form .btn { margin-top: 1rem; justify-self: start; }
 @media (min-width: 60rem) {
   .audience, .steps { grid-template-columns: repeat(4, 1fr); }
 }
+
+.hero-img, .wide-img { display: block; width: 100%; height: auto; max-height: 26rem; object-fit: cover; border-radius: var(--radius); }
+.hero-img { margin-top: 2rem; }
+.wide-img { margin: 1.5rem 0; }
+.btn.ghost { background: transparent; color: inherit; border: 1px solid currentColor; margin-left: .5rem; }
