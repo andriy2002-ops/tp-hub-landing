@@ -112,3 +112,12 @@ form .btn { margin-top: 1rem; }
   .section { padding: 3.5rem 0; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+/* Фонові фото секцій */
+.section.bg { position: relative; background-size: cover; background-position: center; background-repeat: no-repeat; }
+.section.dark.bg-truck { background-image: linear-gradient(rgba(11,18,32,.55), rgba(11,18,32,.72)), url("img/truck.jpg"); background-position: center 60%; }
+.section.dark.bg-van { background-image: linear-gradient(90deg, rgba(11,18,32,.92), rgba(11,18,32,.65)), url("img/van.jpg"); }
+.section.alt.bg-warehouse { background-image: linear-gradient(rgba(244,246,251,.80), rgba(244,246,251,.88)), url("img/warehouse2.jpg"); }
+.section.bg-container { background-image: linear-gradient(rgba(255,255,255,.84), rgba(255,255,255,.92)), url("img/warehouse.jpg"); }
+.section.bg-contact { background-image: linear-gradient(rgba(11,18,32,.55), rgba(11,18,32,.75)), url("img/truck.jpg"); }
+.bg-contact .contact-box { background: rgba(11,18,32,.82); backdrop-filter: blur(6px); }
