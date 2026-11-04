@@ -153,14 +153,20 @@
             <li><span>Адреса</span>Тернопіль, 24/7</li>
           </ul>
         </div>
-        <form id="contact-form" action="mailto:brokgroup1@gmail.com" method="post" enctype="text/plain">
+        <form id="contact-form" novalidate>
           <label for="name">Ім'я</label>
           <input id="name" name="name" type="text" autocomplete="name" required>
           <label for="contact">Телефон або email</label>
           <input id="contact" name="contact" type="text" autocomplete="email" required>
           <label for="message">Тип вантажу, об'єм, одержувачі, напрямки</label>
           <textarea id="message" name="message" rows="4" required></textarea>
-          <button class="btn" type="submit">Надіслати запит</button>
+          <p class="send-title">Надіслати запит через:</p>
+          <div class="send-btns">
+            <button class="send wa" type="button" data-channel="whatsapp">WhatsApp</button>
+            <button class="send vb" type="button" data-channel="viber">Viber</button>
+            <button class="send em" type="button" data-channel="email">Email</button>
+          </div>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
         </form>
       </div>
     </section>
