@@ -5,7 +5,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
 const PHONE = '380673524745';
 const EMAIL = 'brokgroup1@gmail.com';
 // Адреса Cloudflare Worker (див. telegram-worker/README.md). Порожньо = кнопка «Надіслати зараз» прихована.
-const TELEGRAM_ENDPOINT = '';
+const TELEGRAM_ENDPOINT = 'https://tp-hub-leads.andriy2002.workers.dev';
 
 // ===== Реклама й аналітика =====
 // Вставте свої ID. Порожнє значення = інструмент вимкнено.
