@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://andriy2002-ops.github.io/tp-hub-landing/sitemap.xml
