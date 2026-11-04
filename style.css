@@ -121,3 +121,14 @@ form .btn { margin-top: 1rem; }
 .section.bg-container { background-image: linear-gradient(rgba(255,255,255,.84), rgba(255,255,255,.92)), url("img/warehouse.jpg"); }
 .section.bg-contact { background-image: linear-gradient(rgba(11,18,32,.55), rgba(11,18,32,.75)), url("img/truck.jpg"); }
 .bg-contact .contact-box { background: rgba(11,18,32,.82); backdrop-filter: blur(6px); }
+
+/* Кнопки месенджерів */
+.send-title { margin: 1rem 0 .25rem; font-weight: 600; font-size: .9rem; }
+.send-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+.send { padding: .8rem .5rem; border: 0; border-radius: 10px; color: #fff; font: inherit; font-weight: 700; cursor: pointer; transition: transform .15s, filter .15s; }
+.send:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.send.wa { background: #25d366; color: #06311a; }
+.send.vb { background: #7360f2; }
+.send.em { background: var(--navy); }
+.form-status { min-height: 1.4rem; margin: .5rem 0 0; font-size: .85rem; color: var(--muted); }
+@media (max-width: 420px) { .send-btns { grid-template-columns: 1fr; } }
