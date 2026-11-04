@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Формування договору — Розподільчий логістичний комплекс</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="contract.css?v=9">
+</head>
+<body class="contract-page">
+  <header class="site-header no-print">
+    <div class="container bar">
+      <a class="logo" href="./"><span class="mark">Р</span><span>РЛК <b>Тернопіль</b></span></a>
+      <a class="nav-phone" href="./#calculator">← До калькулятора</a>
+    </div>
+  </header>
+
+  <main class="container wrap">
+    <section class="no-print form-card">
+      <h1>Договір на логістичні послуги</h1>
+      <p class="sub">Заповніть реквізити своєї компанії, і ми сформуємо договір. Дані обробляються тільки у вашому браузері й нікуди не надсилаються.</p>
+      <p class="warn">Це шаблон-чернетка. Перед підписанням рекомендуємо показати його юристу.</p>
+
+      <form id="cform" novalidate>
+        <fieldset>
+          <legend>Замовник (контрагент)</legend>
+          <div class="fgrid">
+            <label>Тип
+              <select name="type"><option value="le">Юридична особа</option><option value="fop">ФОП</option></select>
+            </label>
+            <label>Повна назва / ПІБ ФОП *<input name="name" required autocomplete="organization" placeholder="ТОВ «Приклад»"></label>
+            <label>ЄДРПОУ / РНОКПП *<input name="code" required inputmode="numeric" placeholder="12345678"></label>
+            <label>Податковий статус
+              <select name="tax"><option>є платником ПДВ</option><option>є платником єдиного податку</option><option>є платником податку на прибуток</option></select>
+            </label>
+            <label class="wide">Адреса *<input name="address" required autocomplete="street-address" placeholder="індекс, місто, вулиця, будинок"></label>
+            <label>ПІБ особи, що підписує *<input name="rep" required autocomplete="name"></label>
+            <label>Посада<input name="position" value="директора"></label>
+            <label>Діє на підставі
+              <select name="basis"><option>Статуту</option><option>виписки з ЄДР</option><option>довіреності</option></select>
+            </label>
+            <label>IBAN<input name="iban" placeholder="UA…" autocapitalize="characters"></label>
+            <label>Банк<input name="bank" placeholder="назва банку"></label>
+            <label>Телефон *<input name="phone" required type="tel" autocomplete="tel"></label>
+            <label>Email *<input name="email" required type="email" autocomplete="email"></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Умови договору</legend>
+          <div class="fgrid">
+            <label>Номер договору<input name="num" placeholder="автоматично"></label>
+            <label>Дата договору<input name="date" type="date"></label>
+            <label>Діє до<input name="until" type="date"></label>
+            <label>Оплата
+              <select name="pay">
+                <option value="100">100% передоплата</option>
+                <option value="50">50% передоплата, 50% після надання послуг</option>
+                <option value="post">Післяоплата за актом</option>
+              </select>
+            </label>
+            <label>Строк оплати після рахунку/акта, банк. днів<input name="payDays" type="number" min="1" value="3"></label>
+          </div>
+          <p class="hint" id="calc-hint"></p>
+        </fieldset>
+
+        <div class="actions">
+          <button class="btn" type="submit">Сформувати договір</button>
+          <button class="btn ghost-dark2" type="button" id="btn-print" disabled>Друк / зберегти PDF</button>
+          <button class="btn ghost-dark2" type="button" id="btn-doc" disabled>Завантажити для Word (.doc)</button>
+        </div>
+        <p class="form-status" id="cstatus" role="status"></p>
+      </form>
+    </section>
+
+    <article id="doc" class="doc" hidden></article>
+  </main>
+
+  <script src="prices.js?v=9"></script>
+  <script src="contract.js?v=9"></script>
+</body>
+</html>
