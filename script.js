@@ -2,8 +2,7 @@
 document.getElementById('year').textContent = new Date().getFullYear();
 
 // Форма-заглушка: формує mailto-лист з кодуванням UTF-8 (кирилиця)
-// TODO: замініть email отримувача
-const RECIPIENT = 'hello@example.com';
+const RECIPIENT = 'brokgroup1@gmail.com';
 
 document.getElementById('contact-form').addEventListener('submit', (e) => {
   e.preventDefault();
