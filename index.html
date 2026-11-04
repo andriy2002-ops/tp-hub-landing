@@ -19,7 +19,7 @@
   </script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23ff7a1a'/%3E%3Ctext x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3EР%3C/text%3E%3C/svg%3E">
   <link rel="preload" as="image" href="img/warehouse.jpg">
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=9">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Які вантажі та транспорт ви приймаєте?", "acceptedAnswer": {"@type": "Answer", "text": "Приймаємо 20- і 40-футові контейнери, контейнеровози та фури 80–120 м³. Партії будь-яких розмірів."}}, {"@type": "Question", "name": "Чи працюєте ви цілодобово?", "acceptedAnswer": {"@type": "Answer", "text": "Так, хаб у Тернополі працює 24/7 в автономному режимі."}}, {"@type": "Question", "name": "Які операції ви виконуєте з вантажем?", "acceptedAnswer": {"@type": "Answer", "text": "Крос-докінг і транзитне перевантаження, відповідальне зберігання, пакування та перепакування, маркування і зважування, обробка поверхонь. Інші операції — за погодженням."}}, {"@type": "Question", "name": "Чи доставляєте ви по Україні?", "acceptedAnswer": {"@type": "Answer", "text": "Так. Доставляємо по всій Україні: власний електричний фургон для адресної доставки та відповідний транспорт для кожної партії."}}, {"@type": "Question", "name": "Скільки вантажу можна зберігати?", "acceptedAnswer": {"@type": "Answer", "text": "Складський об'єм — 3500 м³, до 200 європалет на стелажах, висота складу до 6 м. Є вільні складські площі."}}, {"@type": "Question", "name": "Як отримати розрахунок?", "acceptedAnswer": {"@type": "Answer", "text": "Надішліть тип вантажу, об'єм, кількість одержувачів і напрямки через форму нижче, у WhatsApp, Viber, Telegram або по телефону +380 67 352 47 45. Підготуємо варіант обробки та доставки."}}]}</script>
 </head>
 <body>
@@ -35,6 +35,7 @@
           <li><a href="#process">Процес</a></li>
           <li><a href="#capacity">Склад</a></li>
           <li><a href="#services">Послуги</a></li>
+          <li><a href="#calculator">Калькулятор</a></li>
           <li><a href="#faq">Питання</a></li>
           <li><a href="#contacts">Контакти</a></li>
         </ul>
@@ -122,6 +123,26 @@
       </div>
     </section>
 
+    <section data-reveal class="section" id="calculator" aria-labelledby="calc-title">
+      <div class="container">
+        <p class="kicker">Калькулятор</p>
+        <h2 id="calc-title">Орієнтовна вартість послуг</h2>
+        <p class="sub">Вкажіть обсяги, і ви одразу побачите приблизну суму. Остаточна ціна фіксується в договорі.</p>
+        <div class="calc" id="calc">
+          <div class="calc-inputs" id="calc-rows"></div>
+          <aside class="calc-result" aria-live="polite">
+            <h3>Ваш розрахунок</h3>
+            <ul class="calc-lines" id="calc-lines"></ul>
+            <div class="calc-total" id="calc-total"></div>
+            <label class="calc-vat"><input type="checkbox" id="calc-vat"> Показати з ПДВ 20%</label>
+            <button class="btn" type="button" id="calc-contract" disabled>Скласти договір</button>
+            <button class="btn ghost-dark" type="button" id="calc-message" disabled>Надіслати розрахунок у запиті</button>
+            <p class="calc-note">Ціни орієнтовні, у гривнях. Обробка поверхонь та інші операції — за погодженням.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
     <section data-reveal class="section alt bg bg-warehouse" id="services" aria-labelledby="services-title">
       <div class="container">
         <p class="kicker">Послуги</p>
@@ -202,7 +223,7 @@
   <footer class="site-footer">
     <div class="container">
       <p>&copy; <span id="year">2026</span> Розподільчий логістичний комплекс, Тернопіль</p>
-      <p>Прийняли. Розподілили. Доставили. &bull; <a href="privacy.html">Політика конфіденційності</a></p>
+      <p>Прийняли. Розподілили. Доставили. &bull; <a href="contract.html">Сформувати договір</a> &bull; <a href="privacy.html">Політика конфіденційності</a></p>
     </div>
   </footer>
 
@@ -216,6 +237,8 @@
     <div><button type="button" id="consent-yes" class="btn">Прийняти</button> <button type="button" id="consent-no" class="btn ghost">Відхилити</button></div>
   </div>
 
-  <script src="script.js?v=8"></script>
+  <script src="prices.js?v=9"></script>
+  <script src="calc.js?v=9"></script>
+  <script src="script.js?v=9"></script>
 </body>
 </html>
