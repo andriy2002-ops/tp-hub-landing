@@ -4,9 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <!-- TODO: замініть заголовок і опис -->
-  <title>Імʼя Прізвище — веб-розробник</title>
-  <meta name="description" content="Сайт-візитка: допомагаю створювати зручні та швидкі сайти.">
+  <title>Розподільчий логістичний комплекс — Тернопіль</title>
+  <meta name="description" content="Розподільчий логістичний комплекс у Тернополі: приймаємо, розподіляємо та доставляємо вантажі по Україні. 24/7, 10+ років досвіду.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,11 +13,12 @@
 
   <header class="site-header">
     <div class="container bar">
-      <a class="logo" href="#top">Імʼя.</a> <!-- TODO: ваш логотип або імʼя -->
+      <a class="logo" href="#top">РЛК Тернопіль</a>
       <nav aria-label="Основна навігація">
         <ul>
-          <li><a href="#about">Про мене</a></li>
-          <li><a href="#benefits">Переваги</a></li>
+          <li><a href="#about">Для кого</a></li>
+          <li><a href="#process">Процес</a></li>
+          <li><a href="#services">Послуги</a></li>
           <li><a href="#contacts">Контакти</a></li>
         </ul>
       </nav>
@@ -26,67 +26,138 @@
   </header>
 
   <main id="main">
+    <!-- HERO -->
     <section class="hero" id="top" aria-labelledby="hero-title">
       <div class="container">
-        <!-- TODO: головний заголовок і підзаголовок -->
-        <h1 id="hero-title">Створюю сайти, які приносять клієнтів</h1>
-        <p class="lead">Швидко, зрозуміло й за помірну ціну. Розкажіть про ваш проєкт — і я запропоную рішення.</p>
-        <!-- TODO: текст і посилання кнопки -->
-        <a class="btn" href="#contacts">Звʼязатися</a>
+        <p class="eyebrow">Тернопіль &bull; 24/7 &bull; 10+ років досвіду</p>
+        <h1 id="hero-title">Розподільча логістика для вашого бізнесу</h1>
+        <p class="lead">Приймаємо і зберігаємо партії будь-яких розмірів; розподіляємо за клієнтами та напрямками.</p>
+        <p class="slogan">Прийняли. Розподілили. Доставили.</p>
+        <a class="btn" href="#contacts">Обговоримо ваш вантаж</a>
       </div>
     </section>
 
+    <!-- ПРО НАС / ДЛЯ КОГО ПРАЦЮЄМО -->
     <section class="section" id="about" aria-labelledby="about-title">
-      <div class="container about">
-        <!-- TODO: замініть фото на своє (наприклад, photo.jpg) і опишіть alt -->
-        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%234f46e5'/%3E%3Ccircle cx='100' cy='80' r='36' fill='%23fff'/%3E%3Cpath d='M30 180c8-40 40-58 70-58s62 18 70 58z' fill='%23fff'/%3E%3C/svg%3E"
-             alt="Портрет-заглушка: замініть на своє фото" width="200" height="200">
-        <div>
-          <h2 id="about-title">Про мене</h2>
-          <!-- TODO: коротка розповідь про себе або послугу -->
-          <p>Мене звати Імʼя. Я маю понад N років досвіду в сфері X. Допомагаю малому бізнесу та приватним особам отримати якісний результат без зайвих складнощів.</p>
-          <p>Працюю прозоро: чіткі строки, зрозуміла ціна, регулярний звʼязок.</p>
-        </div>
+      <div class="container">
+        <h2 id="about-title">Для кого працюємо</h2>
+        <p class="sub">Розподільчий логістичний комплекс — хаб у Тернополі для тих, кому потрібно швидко й точно розподілити вантаж.</p>
+        <ol class="grid audience">
+          <li class="card"><span class="num" aria-hidden="true">01</span><h3>Імпортери</h3><p>Розподіл закордонних партій.</p></li>
+          <li class="card"><span class="num" aria-hidden="true">02</span><h3>Карго-компанії</h3><p>Сортування збірних вантажів.</p></li>
+          <li class="card"><span class="num" aria-hidden="true">03</span><h3>Логістичні та експедиторські компанії</h3><p>Партнерський хаб у Тернополі.</p></li>
+          <li class="card"><span class="num" aria-hidden="true">04</span><h3>Дистриб'ютори</h3><p>Регіональний запас і доставка потрібними партіями.</p></li>
+        </ol>
       </div>
     </section>
 
+    <!-- ПЕРЕВАГИ (3 картки) -->
     <section class="section alt" id="benefits" aria-labelledby="benefits-title">
       <div class="container">
-        <h2 id="benefits-title">Чому обирають мене</h2>
-        <ul class="cards">
-          <!-- TODO: замініть три переваги -->
+        <h2 id="benefits-title">Прийняли. Розподілили. Доставили.</h2>
+        <ul class="grid three">
           <li class="card">
-            <h3>Швидко</h3>
-            <p>Перший результат уже за кілька днів, а не тижнів.</p>
+            <!-- TODO: за потреби замініть іконки на фото з презентації -->
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4m0 10V11m9-4l-9 4"/></svg>
+            <h3>Прийняли</h3>
+            <p>Контейнери, контейнеровози та фури — розвантажуємо й перевіряємо кожну партію.</p>
           </li>
           <li class="card">
-            <h3>Прозоро</h3>
-            <p>Фіксована ціна та чіткий план робіт до початку співпраці.</p>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h6M4 12h16M4 18h6M14 6h6M14 18h6"/></svg>
+            <h3>Розподілили</h3>
+            <p>Сортуємо за клієнтами, адресами та регіонами, зберігаємо й готуємо до відправлення.</p>
           </li>
           <li class="card">
-            <h3>Надійно</h3>
-            <p>Підтримка після запуску і відповіді на запитання без черг.</p>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2zM13 9h5l4 4v3h-9zM6 19a2 2 0 100-4 2 2 0 000 4zm11 0a2 2 0 100-4 2 2 0 000 4z"/></svg>
+            <h3>Доставили</h3>
+            <p>Доставка по Україні з відповідним транспортом для кожної партії.</p>
           </li>
         </ul>
       </div>
     </section>
 
-    <section class="section" id="contacts" aria-labelledby="contacts-title">
-      <div class="container narrow">
-        <h2 id="contacts-title">Контакти</h2>
-        <p>Заповніть форму — відкриється ваш поштовий застосунок із готовим листом.</p>
-        <!-- TODO: email отримувача задається в script.js (RECIPIENT) і тут як запасний варіант -->
+    <!-- ПРОЦЕС -->
+    <section class="section" id="process" aria-labelledby="process-title">
+      <div class="container">
+        <h2 id="process-title">Від фури — до одержувача</h2>
+        <p class="sub">Приймаємо 20- і 40-футові контейнери, контейнеровози та фури 80–120&nbsp;м³.</p>
+        <ol class="grid steps">
+          <li class="card"><span class="num" aria-hidden="true">01</span><h3>Розвантаження</h3><p>Розвантажуємо і перевіряємо партію.</p></li>
+          <li class="card"><span class="num" aria-hidden="true">02</span><h3>Сортування</h3><p>Сортуємо за клієнтами, адресами та регіонами.</p></li>
+          <li class="card"><span class="num" aria-hidden="true">03</span><h3>Підготовка</h3><p>Зберігаємо, перепаковуємо, маркуємо і готуємо до відправлення.</p></li>
+          <li class="card"><span class="num" aria-hidden="true">04</span><h3>Доставка</h3><p>Доставляємо по Україні.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ЦИФРИ -->
+    <section class="section alt" id="numbers" aria-labelledby="numbers-title">
+      <div class="container">
+        <h2 id="numbers-title">Надійна ланка вашого ланцюга постачання</h2>
+        <dl class="grid stats">
+          <div class="card"><dt>Складський об'єм</dt><dd>3500 м³</dd></div>
+          <div class="card"><dt>Висота складу</dt><dd>до 6 м</dd></div>
+          <div class="card"><dt>Європалет на стелажах</dt><dd>до 200</dd></div>
+          <div class="card"><dt>Рампи</dt><dd>2</dd></div>
+          <div class="card"><dt>Складські площі</dt><dd>вільні</dd></div>
+          <div class="card"><dt>Робота</dt><dd>24/7 автономна</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ПОСЛУГИ + ДОСТАВКА -->
+    <section class="section" id="services" aria-labelledby="services-title">
+      <div class="container two">
+        <div>
+          <h2 id="services-title">Послуги</h2>
+          <ul class="checks">
+            <li>Крос-докінг і транзитне перевантаження</li>
+            <li>Відповідальне зберігання</li>
+            <li>Пакування та перепакування</li>
+            <li>Маркування і зважування</li>
+            <li>Обробка поверхонь</li>
+            <li>Інші операції — за погодженням</li>
+          </ul>
+        </div>
+        <div>
+          <h2>Доставка</h2>
+          <ul class="checks">
+            <li>По всій Україні</li>
+            <li>Власний електричний фургон для адресної доставки</li>
+            <li>Відповідний транспорт для кожної партії</li>
+          </ul>
+          <!-- TODO: додайте фото складу/фургона (замість градієнтного блоку) -->
+          <div class="photo" role="img" aria-label="Ілюстрація-заглушка: склад і доставка"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- КОНТАКТИ -->
+    <section class="section alt" id="contacts" aria-labelledby="contacts-title">
+      <div class="container two">
+        <div>
+          <h2 id="contacts-title">Обговоримо ваш вантаж</h2>
+          <p>Надішліть тип вантажу, об'єм, кількість одержувачів і напрямки — підготуємо варіант обробки та доставки.</p>
+          <!-- TODO: підставте реальні контакти -->
+          <ul class="contact-list">
+            <li>Контактна особа: [Ім'я]</li>
+            <li>Телефон: [Телефон]</li>
+            <li>Telegram / Viber: [Telegram / Viber]</li>
+            <li>Адреса: Тернопіль</li>
+          </ul>
+        </div>
+        <!-- TODO: замініть email отримувача тут і в script.js (RECIPIENT) -->
         <form id="contact-form" action="mailto:hello@example.com" method="post" enctype="text/plain">
-          <label for="name">Імʼя</label>
+          <label for="name">Ім'я</label>
           <input id="name" name="name" type="text" autocomplete="name" required>
 
-          <label for="email">Ваш email</label>
-          <input id="email" name="email" type="email" autocomplete="email" required>
+          <label for="contact">Телефон або email</label>
+          <input id="contact" name="contact" type="text" autocomplete="email" required>
 
-          <label for="message">Повідомлення</label>
+          <label for="message">Тип вантажу, об'єм, одержувачі, напрямки</label>
           <textarea id="message" name="message" rows="5" required></textarea>
 
-          <button class="btn" type="submit">Надіслати</button>
+          <button class="btn" type="submit">Надіслати запит</button>
         </form>
       </div>
     </section>
@@ -94,8 +165,7 @@
 
   <footer class="site-footer">
     <div class="container">
-      <!-- TODO: ваше імʼя та посилання на соцмережі -->
-      <p>&copy; <span id="year">2026</span> Імʼя Прізвище. Усі права захищено.</p>
+      <p>&copy; <span id="year">2026</span> Розподільчий логістичний комплекс, Тернопіль. Прийняли. Розподілили. Доставили.</p>
     </div>
   </footer>
 
