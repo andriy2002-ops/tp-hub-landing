@@ -69,7 +69,7 @@ async function openShipment(s) {
     '<div><dt>Місць / палет</dt><dd>' + esc(s.places || '—') + ' / ' + esc(s.pallets || '—') + '</dd></div><div><dt>Вага / об\'єм</dt><dd>' + esc(s.weight || '—') + ' кг / ' + esc(s.volume || '—') + ' м³</dd></div>' +
     '<div><dt>Оголошена вартість</dt><dd>' + (s.declared_value ? money(s.declared_value) : '—') + '</dd></div><div><dt>Місце на складі</dt><dd>' + esc(s.location || '—') + '</dd></div>' +
     '<div class="wide"><dt>Одержувачі / напрямки</dt><dd>' + esc(s.receivers || '—') + '</dd></div></dl>' +
-    (s.calc && s.calc.lines ? '<p class="muted">Орієнтовна вартість послуг у заявці: <b>' + money(s.calc.total) + '</b> без ПДВ</p>' : '') +
+    (s.calc && s.calc.lines ? '<p class="muted">Орієнтовна вартість послуг у заявці: <b>' + money(s.calc.total) + '</b> без ПДВ' + (s.calc.offer ? '<br>Ваша пропозиція ціни: <b>' + money(s.calc.offer.price) + '</b>' + (s.calc.offer.comment ? ' (' + esc(s.calc.offer.comment) + ')' : '') : '') + '</p>' : '') +
     '<h3>Історія</h3><ul class="timeline2">' + (events.length ? events.map((e) => '<li>' + badge(e.status) + ' <span>' + esc(e.comment || '') + '</span><small>' + fmtDate(e.created_at, true) + '</small></li>').join('') : '<li class="muted">Подій немає</li>') + '</ul>' +
     (sd.length ? '<h3>Документи</h3><ul class="doclist">' + sd.map((d) => '<li><a href="' + esc(d.url || '#') + '" target="_blank" rel="noopener">' + icon('file') + esc(d.name) + '</a><small>' + esc(DOC_KINDS[d.kind] || '') + ' · ' + fmtDate(d.created_at) + '</small></li>').join('') + '</ul>' : '') +
     '<div class="actions-row"><button class="btn small" data-a="msg" type="button">Написати менеджеру</button>' +
@@ -101,7 +101,7 @@ async function newRequest(v) {
     '<label>Загальна вага, кг<input name="weight" type="number" min="0"></label><label>Об\'єм, м³<input name="volume" type="number" min="0" step="0.1"></label>' +
     '<label>Оголошена вартість, грн<input name="declared_value" type="number" min="0"></label>' +
     '<label class="wide">Одержувачі та напрямки (куди розподіляти / доставляти)<textarea name="receivers" rows="3"></textarea></label></div>' +
-    '<div class="calc-attach">' + (calc ? '<label class="check"><input type="checkbox" id="useCalc" checked> Додати розрахунок з калькулятора: <b>' + money(calc.total) + '</b> без ПДВ (' + calc.lines.length + ' поз.)</label>' : '<p class="muted">Хочете додати до заявки розрахунок послуг? <a href="#/calculator">Відкрити калькулятор</a></p>') + '</div>' +
+    '<div class="calc-attach">' + (calc ? '<label class="check"><input type="checkbox" id="useCalc" checked> Додати розрахунок з калькулятора: <b>' + money(calc.total) + '</b> без ПДВ (' + calc.lines.length + ' поз.)' + (calc.offer ? ', ваша пропозиція: <b>' + money(calc.offer.price) + '</b>' : '') + '</label>' : '<p class="muted">Хочете додати до заявки розрахунок послуг? <a href="#/calculator">Відкрити калькулятор</a></p>') + '</div>' +
     '<button class="btn" type="submit">Створити заявку</button><p class="msg" id="msg"></p></form>';
   const f = v.querySelector('#nf');
   f.addEventListener('submit', async (e) => {
@@ -170,7 +170,7 @@ async function contractEditor(v, existing) {
     '<label>Дата<input name="date" type="date" value="' + val('date') + '"></label><label>Діє до<input name="until" type="date" value="' + val('until') + '"></label>' +
     '<label>Оплата<select name="pay">' + sel('pay', [['100', '100% передоплата'], ['50', '50% / 50%'], ['post', 'Післяоплата за актом']]) + '</select></label>' +
     '<label>Строк оплати, банк. днів<input name="payDays" type="number" min="1" value="' + val('payDays') + '"></label></div></fieldset>' +
-    (calc && calc.lines ? '<p class="muted">До договору буде додано розрахунок із калькулятора: <b>' + money(calc.total) + '</b> без ПДВ (Додаток 3).</p>' : '') +
+    (calc && calc.lines ? '<p class="muted">До договору буде додано розрахунок із калькулятора: <b>' + money(calc.total) + '</b> без ПДВ' + (calc.offer ? ', пропозиція ціни: <b>' + money(calc.offer.price) + '</b>' : '') + ' (Додаток 3).</p>' : '') +
     '<div class="actions-row">' + (ro ? '' : '<button class="btn" type="submit">Сформувати договір</button>') + '</div><p class="msg" id="msg"></p></form>' +
     '<div id="pv" hidden><div class="actions-row sticky">' +
     '<button class="btn small ghost-dark2" id="b-print" type="button">Друк / PDF</button><button class="btn small ghost-dark2" id="b-doc" type="button">Завантажити .doc</button>' +

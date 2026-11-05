@@ -74,6 +74,7 @@ async function editShipment(s, clientName) {
   const m = modal(s.number + ' · ' + clientName,
     '<div class="sh-head">' + badge(s.status) + '</div><p>' + esc(s.title || '') + ' · ' + esc(ARRIVAL_TYPES[s.arrival_type] || '') + ' · палет: ' + esc(s.pallets || '—') + ' · вага: ' + esc(s.weight || '—') + ' кг</p>' +
     '<p class="muted">Одержувачі: ' + esc(s.receivers || '—') + (s.calc && s.calc.total ? ' · розрахунок клієнта: ' + money(s.calc.total) : '') + '</p>' +
+    (s.calc && s.calc.offer ? '<div class="notice warn small"><b>Клієнт пропонує свою ціну: ' + money(s.calc.offer.price) + '</b> без ПДВ (' + (s.calc.offer.pct > 0 ? '+' : '') + s.calc.offer.pct + '% до розрахунку)' + (s.calc.offer.comment ? '<br>' + esc(s.calc.offer.comment) : '') + '</div>' : '') +
     '<form id="sf" class="form"><div class="grid2"><label>Новий статус<select name="status">' + Object.keys(STATUS).map((k) => '<option value="' + k + '"' + (k === s.status ? ' selected' : '') + '>' + esc(STATUS[k].label) + '</option>').join('') + '</select></label>' +
     '<label>Місце на складі<input name="location" value="' + esc(s.location || '') + '" placeholder="Ряд 3, стелаж B"></label>' +
     '<label>Очікувана дата<input name="eta" type="date" value="' + esc((s.eta || '').slice(0, 10)) + '"></label><label>Палет (факт)<input name="pallets" type="number" min="0" value="' + esc(s.pallets || '') + '"></label>' +
