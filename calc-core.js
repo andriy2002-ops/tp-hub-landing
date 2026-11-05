@@ -25,7 +25,12 @@
       lines.push({ name: 'Доставка: ' + veh.name + ', ' + (v.cityName ? v.cityName + ' (~' + km + ' км)' : km + ' км'), qty: trips, unit: 'рейс', price: per, sum: trips * per });
     }
     const total = lines.reduce((s, l) => s + l.sum, 0);
-    return { lines, total, vatRate: P.vatRate };
+    const out = { lines, total, vatRate: P.vatRate };
+    const offer = Math.max(0, parseFloat(v.offer) || 0);
+    if (offer > 0 && total > 0) {
+      out.offer = { price: offer, comment: String(v.offerComment || '').trim().slice(0, 300), diff: offer - total, pct: Math.round(((offer - total) / total) * 100) };
+    }
+    return out;
   }
 
   // Віджет: mount(контейнер, { persist, actions:[{label, kind, onClick(state)}] })
@@ -36,7 +41,7 @@
     let group = '';
     P.items.forEach((it) => {
       if (it.group !== group) { group = it.group; html += '<h3 class="calc-group">' + group + '</h3>'; }
-      html += '<label class="calc-row"><span class="calc-name">' + it.name + '<small>' + it.price.toLocaleString('uk-UA') + ' грн / ' + it.unit + '</small></span>' +
+      html += '<label class="calc-row"><span class="calc-name">' + it.name + '<small>' + it.price.toLocaleString('uk-UA') + ' грн / ' + it.unit + (it.usd ? ' (≈ $' + it.usd + ')' : '') + '</small></span>' +
         '<input type="number" min="0" step="1" inputmode="numeric" data-id="' + it.id + '" placeholder="0" aria-label="' + it.name + ', ' + it.unit + '"></label>';
     });
     const storageHtml = '<h3 class="calc-group">Відповідальне зберігання</h3>' +
@@ -52,7 +57,10 @@
       '<label class="mini">рейсів<input type="number" min="1" step="1" data-k="trips" value="1"></label></span></div>';
     root.innerHTML = '<div class="calc-inputs">' + html + storageHtml + deliveryHtml + '</div>' +
       '<aside class="calc-result" aria-live="polite"><h3>Ваш розрахунок</h3><ul class="calc-lines" data-k="lines"></ul><div class="calc-total" data-k="total"></div>' +
-      '<label class="calc-vat"><input type="checkbox" data-k="vat"> Показати з ПДВ 20%</label><div data-k="actions"></div>' +
+      '<label class="calc-vat"><input type="checkbox" data-k="vat"> Показати з ПДВ 20%</label>' +
+      '<div class="calc-offer"><label>Запропонувати свою ціну (за весь розрахунок, грн без ПДВ)<input type="number" min="1" step="1" inputmode="numeric" data-k="offer" placeholder="наприклад, 20000"></label>' +
+      '<label>Коментар до пропозиції<input type="text" maxlength="300" data-k="offerComment" placeholder="обсяг, регулярність, умови"></label><div class="offer-line" data-k="offerLine"></div></div>' +
+      '<div data-k="actions"></div>' +
       '<p class="calc-note">Ціни орієнтовні, у гривнях. Обробка поверхонь та інші операції — за погодженням.</p></aside>';
 
     const q = (k) => root.querySelector('[data-k="' + k + '"]');
@@ -75,6 +83,7 @@
       const custom = cityEl.value === 'custom';
       return {
         items, pallets: q('pallets').value, days: q('days').value, vehicle: q('vehicle').value, trips: q('trips').value,
+        offer: q('offer').value, offerComment: q('offerComment').value,
         km: custom ? q('km').value : cityEl.value,
         cityName: custom ? '' : cityEl.options[cityEl.selectedIndex].text.replace(/\s*\(.*\)/, '')
       };
@@ -88,6 +97,12 @@
       q('total').innerHTML = q('vat').checked
         ? '<span>Без ПДВ: ' + fmt(state.total) + ' · ПДВ ' + Math.round(P.vatRate * 100) + '%: ' + fmt(vat) + '</span><strong>' + fmt(state.total + vat) + '</strong>'
         : '<span>Орієнтовно, без ПДВ</span><strong>' + fmt(state.total) + '</strong>';
+      const ol = q('offerLine');
+      if (state.offer) {
+        const o = state.offer;
+        ol.innerHTML = 'Ваша пропозиція: <b>' + fmt(o.price) + '</b> (' + (o.pct > 0 ? '+' : '') + o.pct + '% до розрахунку). Менеджер розгляне її й зв\'яжеться з вами.';
+        ol.className = 'offer-line on';
+      } else { ol.textContent = ''; ol.className = 'offer-line'; }
       btns.forEach((b, i) => { if ((opts.actions[i] || {}).needsLines !== false) b.disabled = !has; });
     }
     function update() {

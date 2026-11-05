@@ -35,7 +35,7 @@
     let g = '';
     P.items.forEach((it) => {
       if (it.group !== g) { g = it.group; rows += '<tr><th colspan="3">' + esc(g) + '</th></tr>'; }
-      rows += '<tr><td>' + esc(it.name) + '</td><td>' + esc(it.unit) + '</td><td class="r">' + money(it.price) + '</td></tr>';
+      rows += '<tr><td>' + esc(it.name) + '</td><td>' + esc(it.unit) + '</td><td class="r">' + money(it.price) + (it.usd ? ' (≈ $' + it.usd + ')' : '') + '</td></tr>';
     });
     rows += '<tr><th colspan="3">Відповідальне зберігання</th></tr>' +
       '<tr><td>Зберігання на стелажах (перші ' + P.freeStorageDays + ' доби безкоштовно)</td><td>палета / доба</td><td class="r">' + money(P.storage.perPalletDay) + '</td></tr>' +
@@ -52,7 +52,8 @@
       calc.lines.map((l, i) => '<tr><td>' + (i + 1) + '</td><td>' + esc(l.name) + '</td><td>' + l.qty + ' ' + esc(l.unit) + '</td><td class="r">' + money(l.sum) + '</td></tr>').join('') +
       '<tr><td colspan="3"><b>Разом без ПДВ</b></td><td class="r"><b>' + money(calc.total) + '</b></td></tr>' +
       '<tr><td colspan="3">ПДВ ' + Math.round(P.vatRate * 100) + '% (якщо Виконавець є платником ПДВ)</td><td class="r">' + money(vat) + '</td></tr>' +
-      '<tr><td colspan="3"><b>Разом з ПДВ</b></td><td class="r"><b>' + money(calc.total + vat) + '</b></td></tr></table>';
+      '<tr><td colspan="3"><b>Разом з ПДВ</b></td><td class="r"><b>' + money(calc.total + vat) + '</b></td></tr></table>' +
+      (calc.offer ? '<p><b>Пропозиція Замовника щодо ціни:</b> ' + money(calc.offer.price) + ' без ПДВ' + (calc.offer.comment ? ' (' + esc(calc.offer.comment) + ')' : '') + '. Пропозиція не є погодженою ціною й набуває чинності лише після письмового підтвердження Виконавця в Заявці або додатковій угоді.</p>' : '');
   }
 
   function build(d, calc) {
@@ -147,7 +148,7 @@
 
       '<div class="pb"></div><p class="center"><b>Додаток 1<br>до Договору № ' + num + ' від ' + dateUk(f.date) + '</b></p>' +
       '<h2>ТАРИФИ НА ПОСЛУГИ</h2>' + tariffTable() +
-      '<p>Ціни вказані в гривнях без ПДВ. Мінімальна вартість та умови окремих послуг можуть уточнюватися в Заявці.</p>' +
+      '<p>Ціни вказані в гривнях без ПДВ. Еквівалент у доларах США наведено довідково, розрахунки здійснюються в гривнях. Мінімальна вартість та умови окремих послуг можуть уточнюватися в Заявці.</p>' +
 
       '<div class="pb"></div><p class="center"><b>Додаток 2<br>до Договору № ' + num + ' від ' + dateUk(f.date) + '</b></p>' +
       '<h2>ЗАЯВКА № ____ від ____________</h2>' +
