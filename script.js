@@ -3,7 +3,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 // Куди надсилати запити
 const PHONE = '380673524745';
-const EMAIL = 'brokgroup1@gmail.com';
+const EMAIL = 'ternopilhubcom@gmail.com';
 // Адреса Cloudflare Worker (див. telegram-worker/README.md). Порожньо = кнопка «Надіслати зараз» прихована.
 const TELEGRAM_ENDPOINT = 'https://tp-hub-leads.andriy2002.workers.dev';
 

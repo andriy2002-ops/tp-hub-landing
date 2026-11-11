@@ -33,7 +33,7 @@ async function dashboard(v) {
     '<a class="qa" href="#/calculator">' + icon('calc') + '<b>Калькулятор</b><small>Орієнтовна вартість</small></a>' +
     '<a class="qa" href="#/contracts/new">' + icon('file') + '<b>Скласти договір</b><small>За реквізитами компанії</small></a>' +
     '<a class="qa" href="#/cameras">' + icon('cam') + '<b>Камери</b><small>' + cams.length + ' доступно</small></a></div>' +
-    '<div class="contact-mini"><b>Ваш менеджер</b><p><a href="tel:+380673524745">+380 67 352 47 45</a> · <a href="mailto:brokgroup1@gmail.com">brokgroup1@gmail.com</a></p><p><a href="#/messages">Написати в чат →</a></p></div></section></div>';
+    '<div class="contact-mini"><b>Ваш менеджер</b><p><a href="tel:+380673524745">+380 67 352 47 45</a> · <a href="mailto:ternopilhubcom@gmail.com">ternopilhubcom@gmail.com</a></p><p><a href="#/messages">Написати в чат →</a></p></div></section></div>';
 }
 
 // ================= ВАНТАЖІ =================

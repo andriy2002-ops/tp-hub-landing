@@ -14,7 +14,7 @@
     iban: '',
     bank: '',
     phone: '+380 67 352 47 45',
-    email: 'brokgroup1@gmail.com'
+    email: 'ternopilhubcom@gmail.com'
   };
 
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
