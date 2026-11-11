@@ -5,14 +5,16 @@
 export default {
   async fetch(request, env) {
     const origin = request.headers.get('Origin') || '';
+    // ALLOWED_ORIGIN: один або кілька origin через кому
+    const allowed = (env.ALLOWED_ORIGIN || '').split(',').map((x) => x.trim()).filter(Boolean).includes(origin);
     const cors = {
-      'Access-Control-Allow-Origin': env.ALLOWED_ORIGIN || '',
+      'Access-Control-Allow-Origin': allowed ? origin : '',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
       'Vary': 'Origin'
     };
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
-    if (request.method !== 'POST' || origin !== env.ALLOWED_ORIGIN) {
+    if (request.method !== 'POST' || !allowed) {
       return new Response('Forbidden', { status: 403, headers: cors });
     }
 
@@ -23,7 +25,8 @@ export default {
     if (!name || !contact || !message) return new Response('Missing fields', { status: 422, headers: cors });
     if (d.website) return new Response('OK', { status: 200, headers: cors }); // honeypot для ботів
 
-    const text = '📦 Нова заявка з сайту\n\n' +
+    const head = d.kind === 'registration' ? '🆕 Новий клієнт у кабінеті' : '📦 Нова заявка з сайту';
+    const text = head + '\n\n' +
       '👤 ' + name + '\n📞 ' + contact + '\n\n' + message + (source ? '\n\n🔎 ' + source : '');
     const r = await fetch('https://api.telegram.org/bot' + env.BOT_TOKEN + '/sendMessage', {
       method: 'POST',

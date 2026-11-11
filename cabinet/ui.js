@@ -72,9 +72,9 @@ export function modal(title, bodyHtml, opts) {
 export function formData(form) { return Object.fromEntries(new FormData(form)); }
 export const empty = (text) => '<div class="empty-state">' + esc(text) + '</div>';
 
-export async function notifyManager(cfgEndpoint, title, text) {
+export async function notifyManager(cfgEndpoint, title, text, kind, contact) {
   if (ctx.demo || !cfgEndpoint) return;
   try {
-    await fetch(cfgEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: title, contact: ctx.profile ? (ctx.profile.phone || ctx.profile.email || '-') : '-', message: text, source: 'cabinet', website: '' }) });
+    await fetch(cfgEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: title, contact: contact || (ctx.profile ? (ctx.profile.phone || ctx.profile.email || '-') : '-'), message: text, source: 'cabinet', kind: kind || '', website: '' }) });
   } catch (_) { /* сповіщення необов'язкове */ }
 }

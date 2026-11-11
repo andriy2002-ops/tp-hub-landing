@@ -87,7 +87,7 @@ function renderAuth(tab) {
     delete d.password2; delete d.consent;
     try {
       const r = await ctx.api.signUp(d);
-      notifyManager(CABINET_CONFIG.notifyEndpoint, 'Нова реєстрація в кабінеті', 'Компанія: ' + d.company_name + '\nКод: ' + d.edrpou + '\nКонтакт: ' + d.contact_name + ', ' + d.phone + ', ' + d.email);
+      notifyManager(CABINET_CONFIG.notifyEndpoint, 'Новий клієнт очікує підтвердження реєстрації', 'Компанія: ' + d.company_name + '\nКод: ' + d.edrpou + '\nКонтактна особа: ' + d.contact_name + '\nТелефон: ' + d.phone + '\nEmail: ' + d.email + '\n\nЩоб підтвердити: кабінет менеджера → Клієнти → Активувати.\n' + location.origin + location.pathname, 'registration', d.phone || d.email);
       if (r.needsConfirm) { document.getElementById('auth-body').innerHTML = '<div class="notice ok"><h3>Перевірте пошту</h3><p>Ми надіслали лист на ' + esc(d.email) + '. Підтвердіть адресу за посиланням, потім увійдіть. Після цього менеджер активує кабінет.</p></div>'; }
       else await enter();
     } catch (er) { msg(er.message); }
