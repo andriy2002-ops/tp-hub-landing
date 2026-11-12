@@ -80,12 +80,24 @@ async function analyze(request, env, cors) {
   let txt = '';
   if (env.GEMINI_API_KEY) {
     const part = block.type === 'text' ? { text: block.text } : { inline_data: { mime_type: block.source.media_type, data: block.source.data } };
-    const gr = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + (env.AI_MODEL || 'gemini-2.5-flash') + ':generateContent', {
-      method: 'POST',
-      headers: { 'x-goog-api-key': env.GEMINI_API_KEY, 'content-type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [part, { text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.1, maxOutputTokens: 1500 } })
-    });
-    if (!gr.ok) return jres({ error: 'ШІ недоступний (' + gr.status + ')' }, 502, cors);
+    const body = JSON.stringify({ contents: [{ parts: [part, { text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.1, maxOutputTokens: 4096 } });
+    // Основна модель — AI_MODEL, далі запасні. 429/5xx — повтор, 404 — наступна модель.
+    const models = [...new Set([env.AI_MODEL || 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3.1-flash-lite'])];
+    let gr = null;
+    for (const model of models) {
+      for (let i = 0; i < 2; i++) {
+        if (gr) { try { await gr.body.cancel(); } catch (e) { /* ignore */ } }
+        gr = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', {
+          method: 'POST',
+          headers: { 'x-goog-api-key': env.GEMINI_API_KEY, 'content-type': 'application/json' },
+          body
+        });
+        if (gr.ok || ![429, 500, 503, 504].includes(gr.status)) break;
+        await new Promise((r) => setTimeout(r, 1500 * (i + 1)));
+      }
+      if (gr.ok || ![404, 429, 500, 503, 504].includes(gr.status)) break;
+    }
+    if (!gr.ok) return jres({ error: 'ШІ недоступний (' + gr.status + ([429, 503].includes(gr.status) ? ', Google перевантажений — спробуйте за хвилину' : '') + ')' }, 502, cors);
     const go = await gr.json();
     txt = (((go.candidates || [])[0] || {}).content || { parts: [] }).parts.map((x) => x.text || '').join('');
   } else {
