@@ -48,7 +48,7 @@ const CHECKS = 'edr (дані ЄДР звірено), head (керівник/п�
 function jres(obj, status, cors) { return new Response(JSON.stringify(obj), { status: status || 200, headers: { ...cors, 'Content-Type': 'application/json' } }); }
 
 async function analyze(request, env, cors) {
-  if (!env.ANTHROPIC_API_KEY) return jres({ error: 'ШІ не налаштовано (немає ANTHROPIC_API_KEY)' }, 503, cors);
+  if (!env.GEMINI_API_KEY && !env.ANTHROPIC_API_KEY) return jres({ error: 'ШІ не налаштовано (немає GEMINI_API_KEY)' }, 503, cors);
   const token = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
   if (!token) return jres({ error: 'Потрібен вхід' }, 401, cors);
   const hdr = { apikey: SB_KEY, Authorization: 'Bearer ' + token };
@@ -77,14 +77,27 @@ async function analyze(request, env, cors) {
     '"fields": {лише ті з [' + FIELDS + '], які ТОЧНО є в документі про самого клієнта}, ' +
     '"checks": [ключі з [' + CHECKS + '], які цей документ підтверджує], "risk": "low"|"medium"|"high"|null (лише якщо документ містить явні ознаки: борги, санкції, судові справи, ліквідація), "flags": ["короткі попередження, якщо є"]}\n' +
     'Не вигадуй. Якщо даних немає, не додавай поле.';
-  const ar = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model: env.AI_MODEL || 'claude-haiku-5-5', max_tokens: 1200, messages: [{ role: 'user', content: [block, { type: 'text', text: prompt }] }] })
-  });
-  if (!ar.ok) return jres({ error: 'ШІ недоступний (' + ar.status + ')' }, 502, cors);
-  const out = await ar.json();
-  const txt = ((out.content || []).find((c) => c.type === 'text') || {}).text || '';
+  let txt = '';
+  if (env.GEMINI_API_KEY) {
+    const part = block.type === 'text' ? { text: block.text } : { inline_data: { mime_type: block.source.media_type, data: block.source.data } };
+    const gr = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + (env.AI_MODEL || 'gemini-2.5-flash') + ':generateContent', {
+      method: 'POST',
+      headers: { 'x-goog-api-key': env.GEMINI_API_KEY, 'content-type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [part, { text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.1, maxOutputTokens: 1500 } })
+    });
+    if (!gr.ok) return jres({ error: 'ШІ недоступний (' + gr.status + ')' }, 502, cors);
+    const go = await gr.json();
+    txt = (((go.candidates || [])[0] || {}).content || { parts: [] }).parts.map((x) => x.text || '').join('');
+  } else {
+    const ar = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+      body: JSON.stringify({ model: env.AI_MODEL || 'claude-haiku-5-5', max_tokens: 1200, messages: [{ role: 'user', content: [block, { type: 'text', text: prompt }] }] })
+    });
+    if (!ar.ok) return jres({ error: 'ШІ недоступний (' + ar.status + ')' }, 502, cors);
+    const out = await ar.json();
+    txt = ((out.content || []).find((c) => c.type === 'text') || {}).text || '';
+  }
   const m = txt.match(/\{[\s\S]*\}/);
   if (!m) return jres({ error: 'ШІ не повернув результат' }, 502, cors);
   try { return jres(JSON.parse(m[0]), 200, cors); } catch { return jres({ error: 'ШІ повернув некоректний результат' }, 502, cors); }
