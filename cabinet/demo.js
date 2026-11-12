@@ -164,6 +164,34 @@ export function createDemo() {
       notify(d.client_id, 'Новий документ: ' + d.name, '#/documents'); save(); return clone(doc);
     },
 
+    // ===== Справа клієнта (демо: файли зберігаються в localStorage, до 1,5 МБ) =====
+    async listClientFiles(clientId) {
+      const u = need(); const list = db.files || [];
+      const out = u.role === 'manager' ? list.filter((f) => !clientId || f.client_id === clientId) : list.filter((f) => f.client_id === u.id && f.origin === 'client');
+      return clone(out.map(({ data, ...f }) => f)).sort((a, b) => b.created_at.localeCompare(a.created_at));
+    },
+    async uploadClientFile(clientId, file, meta) {
+      const u = need(); if (file.size > 1.5 * 1024 * 1024) throw new Error('У демо-режимі файл не більше 1,5 МБ');
+      const data = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(new Error('Не вдалося прочитати файл')); r.readAsDataURL(file); });
+      db.files = db.files || [];
+      const f = { id: uid(), client_id: u.role === 'manager' ? clientId : u.id, origin: u.role === 'manager' ? 'manager' : 'client', category: meta.category || 'other', title: meta.title || file.name, note: meta.note || null, source_url: meta.source_url || null, file_name: file.name, mime: file.type || null, size: file.size, created_at: now(), data };
+      db.files.push(f); save(); const { data: _d, ...pubf } = f; return pubf;
+    },
+    async getFileUrl(f) { const x = (db.files || []).find((i) => i.id === f.id); if (!x) throw new Error('Файл не знайдено'); return x.data; },
+    async deleteClientFile(f) {
+      const u = need(); const x = (db.files || []).find((i) => i.id === f.id);
+      if (!x || (u.role !== 'manager' && (x.client_id !== u.id || x.origin !== 'client'))) throw new Error('Немає доступу');
+      db.files = db.files.filter((i) => i.id !== f.id); save();
+    },
+    async getCase(clientId) { if (!isMgr()) throw new Error('Немає доступу'); db.cases = db.cases || {}; return clone(db.cases[clientId] || { client_id: clientId, risk: 'unknown', checklist: {}, notes: '' }); },
+    async saveCase(clientId, c) { if (!isMgr()) throw new Error('Немає доступу'); db.cases = db.cases || {}; db.cases[clientId] = { client_id: clientId, risk: c.risk || 'unknown', checklist: c.checklist || {}, notes: c.notes || '', updated_at: now() }; save(); },
+    async updateClientProfile(id, patch) {
+      if (!isMgr()) throw new Error('Немає доступу');
+      const u = db.users.find((x) => x.id === id); if (!u) throw new Error('Клієнта не знайдено');
+      ['company_name', 'edrpou', 'contact_name', 'position', 'basis', 'phone', 'address', 'tax', 'iban', 'bank', 'type'].forEach((k) => { if (k in patch) u[k] = patch[k]; });
+      save(); return pub(u);
+    },
+
     async listCameras() {
       const u = need();
       if (u.role === 'manager') return clone(db.cameras);

@@ -1,6 +1,7 @@
-import { FLOW, STATUS, CLOSED, STORED_STATES, ARRIVAL_TYPES, DOC_KINDS } from './data.js';
+import { FLOW, STATUS, CLOSED, STORED_STATES, ARRIVAL_TYPES, DOC_KINDS, FILE_CATEGORIES, CLIENT_CATEGORIES } from './data.js';
 import { ctx, esc, money, fmtDate, ago, badge, accBadge, conBadge, toast, modal, formData, empty, icon, notifyManager } from './ui.js';
 import { CABINET_CONFIG } from './config.js';
+import { ACCEPT, checkFile, filesTable, bindFiles } from './files.js';
 
 const api = () => ctx.api;
 const isActive = () => ctx.profile.status === 'active';
@@ -208,12 +209,32 @@ async function contractEditor(v, existing) {
 
 // ================= ДОКУМЕНТИ =================
 async function documents(v) {
-  const docs = await api().listDocuments();
-  const sh = await api().listShipments(); const num = Object.fromEntries(sh.map((s) => [s.id, s.number]));
-  v.innerHTML = '<h1>Документи</h1><p class="sub">Акти, рахунки та фото приймання, які завантажує менеджер.</p>' +
+  const [docs, sh, mine] = await Promise.all([api().listDocuments(), api().listShipments(), api().listClientFiles()]);
+  const num = Object.fromEntries(sh.map((s) => [s.id, s.number]));
+  v.innerHTML = '<h1>Документи</h1>' +
+    '<section class="card2"><h2>Мої документи для перевірки</h2><p class="sub">Завантажте статут, витяг з ЄДР, довідку про платника ПДВ, довіреність чи інші документи. Це прискорить підтвердження кабінету та підготовку договору. Бачите їх лише ви та менеджер хабу.</p>' +
+    '<form id="upf" class="form"><div class="grid2"><label>Тип документа<select name="category">' + CLIENT_CATEGORIES.map((k) => '<option value="' + k + '">' + esc(FILE_CATEGORIES[k]) + '</option>').join('') + '</select></label>' +
+    '<label>Назва (необов\'язково)<input name="title" maxlength="120" placeholder="Наприклад: Статут, редакція 2024"></label>' +
+    '<label class="wide">Файл (PDF, фото, Word, Excel; до 15 МБ)<input name="file" type="file" accept="' + ACCEPT + '" required></label></div>' +
+    '<button class="btn" type="submit">Завантажити</button> <span class="muted small" id="upst"></span></form>' +
+    '<div id="myfiles" class="mt">' + filesTable(mine, { canDelete: true, emptyText: 'Ви ще нічого не завантажили.' }) + '</div></section>' +
+    '<h2 class="mt2">Від менеджера</h2><p class="sub">Акти, рахунки та фото приймання, які завантажує менеджер.</p>' +
     (docs.length ? '<div class="tablewrap"><table class="t"><thead><tr><th>Документ</th><th>Тип</th><th>Вантаж</th><th>Дата</th></tr></thead><tbody>' +
       docs.map((d) => '<tr><td><a href="' + esc(d.url || '#') + '" target="_blank" rel="noopener">' + icon('file') + ' ' + esc(d.name) + '</a></td><td>' + esc(DOC_KINDS[d.kind] || '') + '</td><td>' + esc(num[d.shipment_id] || '—') + '</td><td>' + fmtDate(d.created_at) + '</td></tr>').join('') + '</tbody></table></div>'
-      : empty('Документів поки немає.'));
+      : empty('Документів від менеджера поки немає.'));
+  bindFiles(v.querySelector('#myfiles'), mine, () => window.__route());
+  const f = v.querySelector('#upf'); const st = v.querySelector('#upst');
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const d = formData(f); const file = f.elements.file.files[0]; const bad = checkFile(file);
+    if (bad) { st.textContent = bad; return; }
+    const btn = f.querySelector('button[type=submit]'); btn.disabled = true; st.textContent = 'Завантаження…';
+    try {
+      const r = await api().uploadClientFile(null, file, { category: d.category, title: (d.title || '').trim() || file.name });
+      notifyManager(CABINET_CONFIG.notifyEndpoint, 'Клієнт завантажив документ', (ctx.profile.company_name || ctx.profile.email) + '\n' + (FILE_CATEGORIES[d.category] || '') + ': ' + r.title + '\nПерегляньте в кабінеті: справа клієнта.', 'document');
+      toast('Документ завантажено'); window.__route();
+    } catch (er) { st.textContent = er.message; toast(er.message, 'err'); btn.disabled = false; }
+  });
 }
 
 // ================= ВІДЕОСПОСТЕРЕЖЕННЯ =================

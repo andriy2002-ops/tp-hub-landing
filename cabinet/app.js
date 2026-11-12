@@ -158,7 +158,7 @@ async function route() {
   const parts = location.hash.replace(/^#\//, '').split('/');
   const name = parts[0] || 'dashboard';
   const fn = views[name] || views[Object.keys(views)[0]];
-  document.querySelectorAll('.side nav a').forEach((a) => a.classList.toggle('on', a.dataset.r === (views[name] ? name : '')));
+  document.querySelectorAll('.side nav a').forEach((a) => a.classList.toggle('on', a.dataset.r === (name === 'm-case' ? 'm-clients' : views[name] ? name : '')));
   const view = document.getElementById('view');
   view.innerHTML = '<div class="loading">Завантаження…</div>';
   try { const r = await fn(view, parts.slice(1)); if (typeof r === 'function') ctx.cleanup = r; view.focus({ preventScroll: true }); window.scrollTo(0, 0); }

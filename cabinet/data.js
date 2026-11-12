@@ -34,3 +34,24 @@ export const ARRIVAL_TYPES = {
 };
 export const DOC_KINDS = { act: 'Акт', invoice: 'Рахунок', photo: 'Фото приймання', contract: 'Договір', other: 'Інше' };
 export const CAMERA_KINDS = { demo: 'Демо (імітація)', hls: 'HLS (.m3u8)', iframe: 'Вбудована сторінка (iframe)', image: 'Знімок (оновлюється)' };
+
+// ===== Справа клієнта =====
+export const FILE_CATEGORIES = {
+  extract: 'Витяг з ЄДР', charter: 'Статут / установчі документи', tax: 'Довідка про податки / ПДВ', license: 'Ліцензії, дозволи',
+  power: 'Довіреність / повноваження', dossier: 'Досьє / перевірка контрагента', court: 'Судові рішення', debt: 'Борги, виконавчі провадження',
+  sanctions: 'Санкції та ризики', property: 'Реєстри майна / нерухомості', media: 'Публікації, відгуки', other: 'Інше'
+};
+export const CLIENT_CATEGORIES = ['charter', 'extract', 'tax', 'license', 'power', 'other'];
+export const CASE_CHECKS = {
+  edr: 'Дані в ЄДР звірено', head: 'Керівник і підписант підтверджені', owners: 'Кінцевих бенефіціарів з’ясовано',
+  sanctions: 'Санкційні списки перевірено', courts: 'Судові справи та борги перевірено', tax: 'Податковий статус / ПДВ підтверджено',
+  address: 'Адресу та вид діяльності підтверджено', docs: 'Статут і повноваження отримано'
+};
+export const RISK = {
+  unknown: { label: 'Не оцінено', tone: 'gray' }, low: { label: 'Низький ризик', tone: 'green' },
+  medium: { label: 'Середній ризик', tone: 'amber' }, high: { label: 'Високий ризик', tone: 'red' }
+};
+export const PROFILE_FIELDS = [
+  ['company_name', 'Назва / ПІБ'], ['edrpou', 'ЄДРПОУ / ІПН'], ['contact_name', 'Контактна особа'], ['position', 'Посада підписанта'],
+  ['basis', 'Підстава (статут тощо)'], ['phone', 'Телефон'], ['address', 'Адреса'], ['tax', 'Податковий статус'], ['iban', 'IBAN'], ['bank', 'Банк']
+];

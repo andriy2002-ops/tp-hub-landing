@@ -105,6 +105,47 @@ export async function createSupa(cfg) {
       await notify(d.client_id, 'Новий документ: ' + d.name, '#/documents'); return r;
     },
 
+    // ===== Справа клієнта: файли, перевірка, доповнення даних =====
+    async listClientFiles(clientId) {
+      let q = sb.from('client_files').select('*').order('created_at', { ascending: false });
+      if (clientId) q = q.eq('client_id', clientId);
+      return must(await q);
+    },
+    async uploadClientFile(clientId, file, meta) {
+      const uid = await uidNow(); const role = await myRole();
+      const cid = role === 'manager' ? clientId : uid; const origin = role === 'manager' ? 'manager' : 'client';
+      const safe = String(file.name || 'file').normalize('NFKD').replace(/[^A-Za-z0-9._-]+/g, '_').slice(-80) || 'file';
+      const path = (origin === 'manager' ? 'case/' : 'client/') + cid + '/' + (crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(36).slice(2)) + '-' + safe;
+      const up = await sb.storage.from('client-files').upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false });
+      if (up.error) throw new Error(friendly(up.error.message));
+      const row = { client_id: cid, origin, category: meta.category || 'other', title: meta.title || file.name, note: meta.note || null, source_url: meta.source_url || null, file_path: path, file_name: file.name, mime: file.type || null, size: file.size, uploaded_by: uid };
+      const r = await sb.from('client_files').insert(row).select().single();
+      if (r.error) { await sb.storage.from('client-files').remove([path]); throw new Error(friendly(r.error.message)); }
+      return r.data;
+    },
+    async getFileUrl(f, download) {
+      const { data, error } = await sb.storage.from('client-files').createSignedUrl(f.file_path, 600, download ? { download: f.file_name || true } : undefined);
+      if (error) throw new Error(friendly(error.message));
+      return data.signedUrl;
+    },
+    async deleteClientFile(f) {
+      must(await sb.from('client_files').delete().eq('id', f.id));
+      await sb.storage.from('client-files').remove([f.file_path]);
+    },
+    async getCase(clientId) {
+      const r = await sb.from('client_cases').select('*').eq('client_id', clientId).maybeSingle();
+      if (r.error) throw new Error(friendly(r.error.message));
+      return r.data || { client_id: clientId, risk: 'unknown', checklist: {}, notes: '' };
+    },
+    async saveCase(clientId, c) {
+      must(await sb.from('client_cases').upsert({ client_id: clientId, risk: c.risk || 'unknown', checklist: c.checklist || {}, notes: c.notes || '', updated_at: new Date().toISOString(), updated_by: await uidNow() }));
+    },
+    async updateClientProfile(id, patch) {
+      const allowed = ['company_name', 'edrpou', 'contact_name', 'position', 'basis', 'phone', 'address', 'tax', 'iban', 'bank', 'type'];
+      const p = {}; allowed.forEach((k) => { if (k in patch) p[k] = patch[k]; });
+      return must(await sb.from('profiles').update(p).eq('id', id).select().single());
+    },
+
     async listCameras() { return must(await sb.from('cameras').select('*').order('name')); },
     async saveCamera(c) { const { id, ...rest } = c; if (id) must(await sb.from('cameras').update(rest).eq('id', id)); else must(await sb.from('cameras').insert(rest)); },
     async getCameraAccess(clientId) { return must(await sb.from('camera_access').select('camera_id').eq('client_id', clientId)).map((r) => r.camera_id); },

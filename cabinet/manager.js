@@ -1,4 +1,5 @@
-import { STATUS, FLOW, CLOSED, ARRIVAL_TYPES, DOC_KINDS, CAMERA_KINDS, CONTRACT_STATUS } from './data.js';
+import { STATUS, FLOW, CLOSED, ARRIVAL_TYPES, DOC_KINDS, CAMERA_KINDS, CONTRACT_STATUS, FILE_CATEGORIES, CASE_CHECKS, RISK, PROFILE_FIELDS } from './data.js';
+import { ACCEPT, checkFile, filesTable, bindFiles } from './files.js';
 import { ctx, esc, money, fmtDate, ago, badge, accBadge, conBadge, toast, modal, formData, empty, icon } from './ui.js';
 
 const api = () => ctx.api;
@@ -32,7 +33,7 @@ async function overview(v) {
 async function clients(v) {
   const list = await api().listProfiles();
   v.innerHTML = '<h1>Клієнти</h1><div class="tablewrap"><table class="t"><thead><tr><th>Компанія</th><th>Контакт</th><th>Код</th><th>Статус</th><th>Реєстрація</th><th></th></tr></thead><tbody>' +
-    (list.length ? list.map((c) => '<tr><td><b>' + esc(c.company_name || '—') + '</b><small class="blk">' + esc(c.email) + '</small></td><td>' + esc(c.contact_name || '—') + '<small class="blk">' + esc(c.phone || '') + '</small></td><td>' + esc(c.edrpou || '—') + '</td><td>' + accBadge(c.status) + '</td><td>' + fmtDate(c.created_at) + '</td><td><button class="btn small ghost-dark2" data-id="' + esc(c.id) + '" type="button">Відкрити</button></td></tr>').join('') : '<tr><td colspan="6">' + empty('Клієнтів ще немає') + '</td></tr>') + '</tbody></table></div>';
+    (list.length ? list.map((c) => '<tr><td><b>' + esc(c.company_name || '—') + '</b><small class="blk">' + esc(c.email) + '</small></td><td>' + esc(c.contact_name || '—') + '<small class="blk">' + esc(c.phone || '') + '</small></td><td>' + esc(c.edrpou || '—') + '</td><td>' + accBadge(c.status) + '</td><td>' + fmtDate(c.created_at) + '</td><td class="nowrap"><a class="btn small" href="#/m-case/' + esc(c.id) + '">Справа</a> <button class="btn small ghost-dark2" data-id="' + esc(c.id) + '" type="button">Швидко</button></td></tr>').join('') : '<tr><td colspan="6">' + empty('Клієнтів ще немає') + '</td></tr>') + '</tbody></table></div>';
   v.querySelectorAll('button[data-id]').forEach((b) => b.addEventListener('click', () => openClient(list.find((c) => c.id === b.dataset.id))));
 }
 
@@ -45,11 +46,102 @@ async function openClient(c) {
     '<div class="wide"><dt>Адреса</dt><dd>' + esc(c.address || '—') + '</dd></div><div class="wide"><dt>IBAN / банк</dt><dd>' + esc((c.iban || '—') + ' ' + (c.bank || '')) + '</dd></div></dl>' +
     '<p class="muted">Вантажів: ' + mine.length + '</p>' +
     '<h3>Доступ до відеоспостереження</h3>' + (cams.length ? '<div class="checks">' + cams.map((x) => '<label class="check"><input type="checkbox" value="' + esc(x.id) + '"' + (access.includes(x.id) ? ' checked' : '') + '> ' + esc(x.name) + ' <small>' + esc(x.zone || '') + '</small></label>').join('') + '</div><button class="btn small" id="sa" type="button">Зберегти доступ</button>' : '<p class="muted">Камер ще не додано (розділ «Камери»).</p>') +
-    '<h3>Статус облікового запису</h3><div class="actions-row">' +
+    '<p><a class="btn small" href="#/m-case/' + esc(c.id) + '">Відкрити справу клієнта</a></p><h3>Статус облікового запису</h3><div class="actions-row">' +
     (c.status !== 'active' ? '<button class="btn small" data-s="active" type="button">Активувати</button>' : '') + (c.status !== 'blocked' ? '<button class="btn small ghost-dark2 danger" data-s="blocked" type="button">Заблокувати</button>' : '') + (c.status === 'active' ? '<button class="btn small ghost-dark2" data-s="pending" type="button">Повернути на перевірку</button>' : '') + '</div>', { wide: true });
   const sa = m.el.querySelector('#sa');
   if (sa) sa.addEventListener('click', async () => { try { await api().setCameraAccess(c.id, [...m.el.querySelectorAll('.checks input:checked')].map((i) => i.value)); toast('Доступ до камер збережено'); } catch (e) { toast(e.message, 'err'); } });
   m.el.querySelectorAll('[data-s]').forEach((b) => b.addEventListener('click', async () => { try { await api().setProfileStatus(c.id, b.dataset.s); toast('Статус змінено'); m.close(); window.__route(); } catch (e) { toast(e.message, 'err'); } }));
+}
+
+// ================= СПРАВА КЛІЄНТА =================
+const riskBadge = (id) => { const r = RISK[id] || RISK.unknown; return '<span class="badge ' + r.tone + '">' + esc(r.label) + '</span>'; };
+
+async function caseView(v, parts) {
+  const id = parts[0];
+  const paint = async () => {
+    const y = window.scrollY;
+    const [clients, shipments, contracts, files, cs] = await Promise.all([api().listProfiles(), api().listShipments(), api().listContracts(), api().listClientFiles(id), api().getCase(id)]);
+    const c = clients.find((x) => x.id === id);
+    if (!c) { v.innerHTML = '<div class="notice err"><h3>Клієнта не знайдено</h3><p><a href="#/m-clients">До списку клієнтів</a></p></div>'; return; }
+    const mine = shipments.filter((s) => s.client_id === id);
+    const cons = contracts.filter((k) => k.client_id === id);
+    const fromClient = files.filter((f) => f.origin === 'client');
+    const fromOpen = files.filter((f) => f.origin === 'manager');
+    const missing = PROFILE_FIELDS.filter(([k]) => !String(c[k] == null ? '' : c[k]).trim());
+    const complete = Math.round(100 * (PROFILE_FIELDS.length - missing.length) / PROFILE_FIELDS.length);
+    const checks = cs.checklist || {};
+    const doneChecks = Object.keys(CASE_CHECKS).filter((k) => checks[k]).length;
+    const active = mine.filter((s) => !CLOSED.includes(s.status)).length;
+
+    v.innerHTML = '<p class="crumbs"><a href="#/m-clients">← Клієнти</a></p>' +
+      '<div class="head"><div><h1>' + esc(c.company_name || c.email) + '</h1><p class="sub nm">' + accBadge(c.status) + ' ' + riskBadge(cs.risk) + ' <span>' + esc(c.email) + '</span></p></div>' +
+      '<div class="actions-row">' + (c.status !== 'active' ? '<button class="btn" data-s="active" type="button">Активувати кабінет</button>' : '') +
+      (c.status !== 'blocked' ? '<button class="btn ghost-dark2 danger" data-s="blocked" type="button">Заблокувати</button>' : '') +
+      (c.status === 'active' ? '<button class="btn ghost-dark2" data-s="pending" type="button">Повернути на перевірку</button>' : '') + '</div></div>' +
+      '<div class="kpis2">' +
+      '<div class="kpi"><b>' + mine.length + '</b><span>вантажів (у роботі: ' + active + ')</span></div>' +
+      '<div class="kpi"><b>' + cons.filter((k) => k.status === 'signed').length + '/' + cons.length + '</b><span>договорів підписано</span></div>' +
+      '<div class="kpi"><b>' + fromClient.length + '</b><span>файлів від клієнта</span></div>' +
+      '<div class="kpi"><b>' + fromOpen.length + '</b><span>матеріалів з відкритих джерел</span></div>' +
+      '<div class="kpi"><b>' + complete + '%</b><span>даних заповнено</span></div></div>' +
+
+      '<div class="cols"><section class="card2"><div class="head sm"><h2>Дані клієнта</h2><button class="btn small ghost-dark2" id="edp" type="button">Доповнити дані</button></div>' +
+      '<dl class="info"><div><dt>Тип</dt><dd>' + (c.type === 'fop' ? 'ФОП' : 'Юр. особа') + '</dd></div>' +
+      PROFILE_FIELDS.map(([k, l]) => '<div' + (k === 'address' || k === 'iban' ? ' class="wide"' : '') + '><dt>' + esc(l) + '</dt><dd>' + (String(c[k] || '').trim() ? esc(c[k]) : '<span class="miss">не вказано</span>') + '</dd></div>').join('') + '</dl>' +
+      (missing.length ? '<div class="notice warn small"><b>Клієнт не вказав:</b> ' + missing.map(([, l]) => esc(l)).join(', ') + '. Знайдіть у відкритих джерелах і натисніть «Доповнити дані».</div>' : '<div class="notice ok small">Усі дані заповнено.</div>') +
+      '</section>' +
+
+      '<section class="card2"><h2>Перевірка контрагента <small class="muted">' + doneChecks + ' з ' + Object.keys(CASE_CHECKS).length + '</small></h2>' +
+      '<form id="csf" class="form"><label>Оцінка ризику<select name="risk">' + Object.keys(RISK).map((k) => '<option value="' + k + '"' + (k === cs.risk ? ' selected' : '') + '>' + esc(RISK[k].label) + '</option>').join('') + '</select></label>' +
+      '<div class="checks">' + Object.keys(CASE_CHECKS).map((k) => '<label class="check"><input type="checkbox" name="chk_' + k + '"' + (checks[k] ? ' checked' : '') + '> ' + esc(CASE_CHECKS[k]) + '</label>').join('') + '</div>' +
+      '<label>Нотатки менеджера (клієнт не бачить)<textarea name="notes" rows="5" maxlength="5000" placeholder="Висновки, ризики, домовленості">' + esc(cs.notes || '') + '</textarea></label>' +
+      '<div><button class="btn small" type="submit">Зберегти</button>' + (cs.updated_at ? ' <small class="muted">оновлено ' + fmtDate(cs.updated_at, true) + '</small>' : '') + '</div></form></section></div>' +
+
+      '<section class="card2 mt"><div class="head sm"><h2>Документи, завантажені клієнтом</h2></div><div id="f-client">' + filesTable(fromClient, { emptyText: 'Клієнт ще не завантажував документів.' }) + '</div></section>' +
+      '<section class="card2 mt"><div class="head sm"><h2>Матеріали з відкритих джерел</h2><button class="btn small" id="addf" type="button">+ Додати матеріал</button></div>' +
+      '<p class="muted small">Витяги з реєстрів, статути, досьє, судові рішення тощо. Це внутрішня справа: клієнт ці файли не бачить.</p>' +
+      '<div id="f-open">' + filesTable(fromOpen, { canDelete: true, emptyText: 'Матеріалів ще немає. Додайте витяг з ЄДР, статут або досьє.' }) + '</div></section>' +
+
+      '<div class="cols mt"><section class="card2"><h2>Вантажі</h2>' + (mine.length ? '<ul class="feed">' + mine.slice(0, 6).map((s) => '<li><div><b>' + esc(s.number) + '</b> ' + badge(s.status) + '</div><p>' + esc(s.title || '') + '</p><small>' + fmtDate(s.created_at) + '</small></li>').join('') + '</ul>' : empty('Вантажів немає')) + '</section>' +
+      '<section class="card2"><h2>Договори</h2>' + (cons.length ? '<ul class="feed">' + cons.map((k) => '<li><div><b>' + esc(k.number) + '</b> ' + conBadge(k.status) + '</div><small>' + fmtDate(k.created_at) + '</small></li>').join('') + '</ul>' : empty('Договорів немає')) + '</section></div>';
+    window.scrollTo(0, y);
+
+    bindFiles(v, files, () => paint());
+    v.querySelectorAll('[data-s]').forEach((b) => b.addEventListener('click', async () => { try { await api().setProfileStatus(id, b.dataset.s); toast('Статус змінено'); paint(); } catch (e) { toast(e.message, 'err'); } }));
+    v.querySelector('#csf').addEventListener('submit', async (e) => {
+      e.preventDefault(); const d = formData(e.target);
+      const checklist = {}; Object.keys(CASE_CHECKS).forEach((k) => { checklist[k] = !!d['chk_' + k]; });
+      try { await api().saveCase(id, { risk: d.risk, checklist, notes: d.notes }); toast('Збережено'); paint(); } catch (er) { toast(er.message, 'err'); }
+    });
+    v.querySelector('#edp').addEventListener('click', () => {
+      const m = modal('Доповнити дані клієнта', '<form id="pf" class="form"><p class="muted small">Внесіть дані, знайдені у відкритих реєстрах. Вони потраплять у профіль клієнта і в договір.</p><div class="grid2">' +
+        '<label>Тип<select name="type"><option value="le"' + (c.type !== 'fop' ? ' selected' : '') + '>Юр. особа</option><option value="fop"' + (c.type === 'fop' ? ' selected' : '') + '>ФОП</option></select></label>' +
+        PROFILE_FIELDS.map(([k, l]) => '<label' + (k === 'address' || k === 'company_name' ? ' class="wide"' : '') + '>' + esc(l) + '<input name="' + k + '" maxlength="200" value="' + esc(c[k] || '') + '"></label>').join('') +
+        '</div><button class="btn" type="submit">Зберегти</button></form>', { wide: true });
+      m.el.querySelector('#pf').addEventListener('submit', async (e) => {
+        e.preventDefault(); const d = formData(e.target); Object.keys(d).forEach((k) => { d[k] = String(d[k]).trim(); });
+        try { await api().updateClientProfile(id, d); toast('Дані оновлено'); m.close(); paint(); } catch (er) { toast(er.message, 'err'); }
+      });
+    });
+    v.querySelector('#addf').addEventListener('click', () => {
+      const m = modal('Новий матеріал у справу', '<form id="af2" class="form"><div class="grid2">' +
+        '<label>Тип<select name="category">' + Object.keys(FILE_CATEGORIES).map((k) => '<option value="' + k + '">' + esc(FILE_CATEGORIES[k]) + '</option>').join('') + '</select></label>' +
+        '<label>Назва *<input name="title" required maxlength="120" placeholder="Витяг з ЄДР станом на ..."></label>' +
+        '<label class="wide">Джерело (посилання, необов\'язково)<input name="source_url" type="url" placeholder="https://"></label>' +
+        '<label class="wide">Коментар<input name="note" maxlength="500"></label>' +
+        '<label class="wide">Файл (PDF, фото, Word, Excel; до 15 МБ) *<input name="file" type="file" accept="' + ACCEPT + '" required></label></div>' +
+        '<button class="btn" type="submit">Додати</button> <span class="muted small" id="afst"></span></form>');
+      m.el.querySelector('#af2').addEventListener('submit', async (e) => {
+        e.preventDefault(); const f = e.target; const d = formData(f); const file = f.elements.file.files[0]; const bad = checkFile(file);
+        const st = m.el.querySelector('#afst'); if (bad) { st.textContent = bad; return; }
+        if (d.source_url && !/^https?:\/\//i.test(d.source_url)) { st.textContent = 'Посилання має починатися з http:// або https://'; return; }
+        const btn = f.querySelector('button[type=submit]'); btn.disabled = true; st.textContent = 'Завантаження…';
+        try { await api().uploadClientFile(id, file, { category: d.category, title: d.title.trim(), note: d.note.trim(), source_url: d.source_url.trim() }); toast('Матеріал додано'); m.close(); paint(); }
+        catch (er) { st.textContent = er.message; btn.disabled = false; }
+      });
+    });
+  };
+  await paint();
 }
 
 // ================= ВАНТАЖІ =================
@@ -180,4 +272,4 @@ async function messages(v) {
   }));
 }
 
-export const managerViews = { 'm-overview': overview, 'm-clients': clients, 'm-shipments': shipments, 'm-contracts': contracts, 'm-documents': documents, 'm-cameras': cameras, 'm-messages': messages };
+export const managerViews = { 'm-overview': overview, 'm-clients': clients, 'm-case': caseView, 'm-shipments': shipments, 'm-contracts': contracts, 'm-documents': documents, 'm-cameras': cameras, 'm-messages': messages };
