@@ -183,6 +183,15 @@ export function createDemo() {
       if (!x || (u.role !== 'manager' && (x.client_id !== u.id || x.origin !== 'client'))) throw new Error('Немає доступу');
       db.files = db.files.filter((i) => i.id !== f.id); save();
     },
+    async analyzeFile(file, client) {
+      const n = (file.name || '').toLowerCase();
+      const pick = /статут|charter/.test(n) ? ['charter', 'Статут (демо-розбір)', { basis: 'Статут' }, ['docs']]
+        : /санкц/.test(n) ? ['sanctions', 'Перевірка санкцій (демо-розбір)', {}, ['sanctions']]
+        : /суд|court/.test(n) ? ['court', 'Судові рішення (демо-розбір)', {}, ['courts']]
+        : ['extract', 'Витяг з ЄДР (демо-розбір)', { edrpou: '12345678', address: 'м. Тернопіль, вул. Демонстраційна, 1', position: 'Директор' }, ['edr', 'address']];
+      await new Promise((r) => setTimeout(r, 600));
+      return { category: pick[0], title: pick[1], summary: 'Демо: у реальному режимі ШІ прочитає файл і коротко опише його зміст.', matches_client: null, fields: pick[2], checks: pick[3], risk: null, flags: [] };
+    },
     async getCase(clientId) { if (!isMgr()) throw new Error('Немає доступу'); db.cases = db.cases || {}; return clone(db.cases[clientId] || { client_id: clientId, risk: 'unknown', checklist: {}, notes: '' }); },
     async saveCase(clientId, c) { if (!isMgr()) throw new Error('Немає доступу'); db.cases = db.cases || {}; db.cases[clientId] = { client_id: clientId, risk: c.risk || 'unknown', checklist: c.checklist || {}, notes: c.notes || '', updated_at: now() }; save(); },
     async updateClientProfile(id, patch) {

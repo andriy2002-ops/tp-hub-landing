@@ -1,3 +1,4 @@
+import { analyzeViaWorker } from './ai.js';
 // Реальний бекенд на Supabase (Auth + Postgres + Row Level Security). Схема: cabinet/supabase.sql
 const CDN = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
 
@@ -131,6 +132,10 @@ export async function createSupa(cfg) {
     async deleteClientFile(f) {
       must(await sb.from('client_files').delete().eq('id', f.id));
       await sb.storage.from('client-files').remove([f.file_path]);
+    },
+    async analyzeFile(file, client) {
+      const { data } = await sb.auth.getSession();
+      return analyzeViaWorker(cfg.notifyEndpoint, data.session && data.session.access_token, file, client || {});
     },
     async getCase(clientId) {
       const r = await sb.from('client_cases').select('*').eq('client_id', clientId).maybeSingle();

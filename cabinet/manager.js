@@ -124,20 +124,47 @@ async function caseView(v, parts) {
       });
     });
     v.querySelector('#addf').addEventListener('click', () => {
-      const m = modal('Новий матеріал у справу', '<form id="af2" class="form"><div class="grid2">' +
-        '<label>Тип<select name="category">' + Object.keys(FILE_CATEGORIES).map((k) => '<option value="' + k + '">' + esc(FILE_CATEGORIES[k]) + '</option>').join('') + '</select></label>' +
-        '<label>Назва *<input name="title" required maxlength="120" placeholder="Витяг з ЄДР станом на ..."></label>' +
-        '<label class="wide">Джерело (посилання, необов\'язково)<input name="source_url" type="url" placeholder="https://"></label>' +
-        '<label class="wide">Коментар<input name="note" maxlength="500"></label>' +
-        '<label class="wide">Файл (PDF, фото, Word, Excel; до 15 МБ) *<input name="file" type="file" accept="' + ACCEPT + '" required></label></div>' +
-        '<button class="btn" type="submit">Додати</button> <span class="muted small" id="afst"></span></form>');
+      const m = modal('Додати документи у справу', '<form id="af2" class="form">' +
+        '<p class="muted small">Оберіть один або кілька файлів. Тип і назву вказувати не потрібно: ШІ прочитає документ (PDF, фото, TXT), визначить тип, коротко опише зміст, заповнить порожні поля клієнта й відмітить пункти перевірки.</p>' +
+        '<label>Файли (до 15 МБ кожен) *<input name="file" type="file" multiple accept="' + ACCEPT + '" required></label>' +
+        '<label>Джерело (посилання, необов\'язково)<input name="source_url" type="url" placeholder="https://"></label>' +
+        '<label class="check"><input type="checkbox" name="ai" checked> Опрацювати ШІ</label>' +
+        '<button class="btn" type="submit">Додати</button><ul class="feed" id="aflog"></ul></form>');
       m.el.querySelector('#af2').addEventListener('submit', async (e) => {
-        e.preventDefault(); const f = e.target; const d = formData(f); const file = f.elements.file.files[0]; const bad = checkFile(file);
-        const st = m.el.querySelector('#afst'); if (bad) { st.textContent = bad; return; }
-        if (d.source_url && !/^https?:\/\//i.test(d.source_url)) { st.textContent = 'Посилання має починатися з http:// або https://'; return; }
-        const btn = f.querySelector('button[type=submit]'); btn.disabled = true; st.textContent = 'Завантаження…';
-        try { await api().uploadClientFile(id, file, { category: d.category, title: d.title.trim(), note: d.note.trim(), source_url: d.source_url.trim() }); toast('Матеріал додано'); m.close(); paint(); }
-        catch (er) { st.textContent = er.message; btn.disabled = false; }
+        e.preventDefault(); const f = e.target; const d = formData(f); const files = Array.from(f.elements.file.files);
+        const src = (d.source_url || '').trim();
+        if (src && !/^https?:\/\//i.test(src)) { toast('Посилання має починатися з http:// або https://', 'err'); return; }
+        for (const x of files) { const bad = checkFile(x); if (bad) { toast(x.name + ': ' + bad, 'err'); return; } }
+        const btn = f.querySelector('button[type=submit]'); btn.disabled = true;
+        const log = m.el.querySelector('#aflog');
+        const line = (t) => { const li = document.createElement('li'); li.textContent = t; log.appendChild(li); return li; };
+        let cur = c; const prof = {}; const checks = Object.assign({}, checks0()); let risk = cs.risk; let ok = 0; const filled = [];
+        function checks0() { return cs.checklist || {}; }
+        for (const file of files) {
+          const li = line(file.name + ': читаю…');
+          let ai = null;
+          if (d.ai) { try { ai = await api().analyzeFile(file, cur); } catch (er) { li.textContent = file.name + ': ШІ не спрацював (' + er.message + ')'; } }
+          try {
+            const cat = ai && FILE_CATEGORIES[ai.category] ? ai.category : 'other';
+            const note = ai ? [ai.summary, (ai.flags || []).length ? 'Увага: ' + ai.flags.join('; ') : ''].filter(Boolean).join(' ') : '';
+            await api().uploadClientFile(id, file, { category: cat, title: (ai && ai.title ? String(ai.title).slice(0, 120) : file.name), note: note.slice(0, 500), source_url: src });
+            ok++;
+            if (ai) {
+              const same = ai.matches_client !== false;
+              if (same && ai.fields) PROFILE_FIELDS.forEach(([k, l]) => { const val = String(ai.fields[k] || '').trim(); if (val && !String(cur[k] || '').trim() && !prof[k]) { prof[k] = val.slice(0, 200); filled.push(l); } });
+              if (same) (ai.checks || []).forEach((k) => { if (CASE_CHECKS[k]) checks[k] = true; });
+              if (ai.matches_client === false) note && toast('Документ «' + file.name + '» схоже стосується іншої компанії', 'err');
+              if (RISK[ai.risk] && ai.risk !== 'unknown' && (cs.risk === 'unknown' || (ai.risk === 'high' && risk !== 'high'))) risk = ai.risk;
+            }
+            li.textContent = file.name + ': ' + (ai ? 'додано, ' + (FILE_CATEGORIES[ai.category] || 'Інше') : 'додано');
+          } catch (er) { li.textContent = file.name + ': помилка (' + er.message + ')'; }
+        }
+        try {
+          if (Object.keys(prof).length) await api().updateClientProfile(id, prof);
+          await api().saveCase(id, { risk, checklist: checks, notes: cs.notes || '' });
+        } catch (er) { toast('Файли додано, але дані справи не оновлено: ' + er.message, 'err'); }
+        toast('Додано файлів: ' + ok + (filled.length ? '. ШІ заповнив: ' + filled.join(', ') : ''));
+        setTimeout(() => { m.close(); paint(); }, 900);
       });
     });
   };
