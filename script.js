@@ -11,8 +11,8 @@ const TELEGRAM_ENDPOINT = 'https://tp-hub-leads.andriy2002.workers.dev';
 // Вставте свої ID. Порожнє значення = інструмент вимкнено.
 const TRACKING = {
   GA4_ID: 'G-4FXM8YJRBP',          // Google Analytics 4, напр. 'G-XXXXXXXXXX'
-  GADS_ID: '',         // Google Ads, напр. 'AW-123456789'
-  GADS_LEAD_LABEL: '', // мітка конверсії, напр. 'AbCdEf'
+  GADS_ID: 'AW-18573284006', // Google Ads, напр. 'AW-123456789'
+  GADS_LEAD_LABEL: 'DVkOCI2Rn7gdEKalt5hF', // мітка конверсії, напр. 'AbCdEf'
   META_PIXEL_ID: ''    // Meta (Facebook/Instagram) Pixel
 };
 
