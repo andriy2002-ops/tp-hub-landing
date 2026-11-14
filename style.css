@@ -115,7 +115,7 @@ form .btn { margin-top: 1rem; }
 
 /* Фонові фото секцій */
 .section.bg { position: relative; background-size: cover; background-position: center; background-repeat: no-repeat; }
-.section.dark.bg-truck { background-image: linear-gradient(rgba(11,18,32,.55), rgba(11,18,32,.72)), url("img/hub-pallets.jpg"); background-position: center 60%; }
+.section.dark.bg-truck { background-image: linear-gradient(rgba(11,18,32,.55), rgba(11,18,32,.72)), url("img/warehouse.jpg"); background-position: center 60%; }
 .section.dark.bg-van { background-image: linear-gradient(90deg, rgba(11,18,32,.92), rgba(11,18,32,.65)), url("img/hub-truck.jpg"); }
 .section.alt.bg-warehouse { background-image: linear-gradient(rgba(244,246,251,.80), rgba(244,246,251,.88)), url("img/hub-shelves2.jpg"); }
 .section.bg-container { background-image: linear-gradient(rgba(255,255,255,.84), rgba(255,255,255,.92)), url("img/hub-shelves.jpg"); }
