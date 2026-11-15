@@ -227,3 +227,10 @@ form .btn { margin-top: 1rem; }
 
 .gallery { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; }
 .gallery img { width: 100%; height: 16rem; object-fit: cover; border-radius: var(--radius); box-shadow: 0 10px 24px rgba(0,0,0,.15); display: block; }
+
+/* Блок для виробників */
+.mfr { background: linear-gradient(180deg, #fff4ea, #fff); border-top: 4px solid var(--accent, #ff7a1a); }
+.mfr .sub { max-width: 46rem; }
+.mfr .actions { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: .75rem; }
+.mfr .btn.ghost { color: var(--navy); border-color: rgba(11,18,32,.35); }
+.mfr .btn.ghost:hover { background: rgba(11,18,32,.07); }
