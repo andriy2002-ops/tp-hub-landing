@@ -61,7 +61,7 @@
       '<div class="calc-offer"><label>Запропонувати свою ціну (за весь розрахунок, грн без ПДВ)<input type="number" min="1" step="1" inputmode="numeric" data-k="offer" placeholder="наприклад, 20000"></label>' +
       '<label>Коментар до пропозиції<input type="text" maxlength="300" data-k="offerComment" placeholder="обсяг, регулярність, умови"></label><div class="offer-line" data-k="offerLine"></div></div>' +
       '<div data-k="actions"></div>' +
-      '<p class="calc-note">Ціни орієнтовні, у гривнях. Обробка поверхонь та інші операції — за погодженням.</p></aside>';
+      '<p class="calc-note">Ціни орієнтовні, у гривнях. Обробка вантажу та інші операції — за погодженням.</p></aside>';
 
     const q = (k) => root.querySelector('[data-k="' + k + '"]');
     const cityEl = q('city');
