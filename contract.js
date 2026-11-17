@@ -27,8 +27,9 @@
     docEl.hidden = false;
     btnPrint.disabled = btnDoc.disabled = false;
     status.textContent = 'Договір сформовано нижче. Можна друкувати або завантажити для Word.';
+    if (window.Analytics) Analytics.event('contract_generate');
     docEl.scrollIntoView({ behavior: 'smooth' });
   });
-  btnPrint.addEventListener('click', () => ContractCore.print(docEl));
-  btnDoc.addEventListener('click', () => ContractCore.download(docEl, lastNum));
+  btnPrint.addEventListener('click', () => { if (window.Analytics) Analytics.event('contract_print'); ContractCore.print(docEl); });
+  btnDoc.addEventListener('click', () => { if (window.Analytics) Analytics.event('file_download', { file_extension: 'doc', file_name: 'contract' }); ContractCore.download(docEl, lastNum); });
 })();

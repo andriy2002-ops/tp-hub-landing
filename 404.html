@@ -1,8 +1,18 @@
 <!DOCTYPE html>
 <html lang="uk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Сторінку не знайдено</title><meta name="robots" content="noindex">
-<link rel="stylesheet" href="/tp-hub-landing/style.css?v=8"></head>
+<link rel="stylesheet" href="/style.css?v=15"></head>
 <body><main class="container" style="padding:6rem 0;text-align:center">
 <h1>404</h1><p>Такої сторінки немає.</p>
-<p><a class="btn" href="/tp-hub-landing/">На головну</a></p>
-</main></body></html>
+<p><a class="btn" href="/">На головну</a> <a class="btn ghost" style="color:#0b1220;border-color:rgba(11,18,32,.35)" href="/#contacts" data-track="contact">Зв'язатися</a></p>
+<p><a href="#" data-cookie-settings>Налаштування cookie</a></p>
+</main>
+<script src="/analytics.js?v=1"></script>
+<script>
+  if (window.Analytics) {
+    var ref = '';
+    try { var u = new URL(document.referrer); ref = u.origin + u.pathname; } catch (e) { /* немає реферера */ }
+    Analytics.event('page_not_found', { page_location: location.origin + location.pathname, page_referrer: ref }, { queue: true });
+  }
+</script>
+</body></html>
