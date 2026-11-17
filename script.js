@@ -12,7 +12,9 @@ const TELEGRAM_ENDPOINT = 'https://tp-hub-leads.andriy2002.workers.dev';
 const TRACKING = {
   GA4_ID: 'G-4FXM8YJRBP',          // Google Analytics 4, напр. 'G-XXXXXXXXXX'
   GADS_ID: 'AW-18573284006', // Google Ads, напр. 'AW-123456789'
-  GADS_LEAD_LABEL: 'DVkOCI2Rn7gdEKalt5hF', // мітка конверсії, напр. 'AbCdEf'
+  GADS_LEAD_LABEL: 'DVkOCI2Rn7gdEKalt5hF', // мітка основної конверсії «Заявка з сайту» (лише відправка форми)
+  GADS_CALL_LABEL: '', // необов'язково: мітка конверсії «Клік по телефону» (створіть у Google Ads як другорядну)
+  GADS_CHAT_LABEL: '', // необов'язково: мітка конверсії «Клік Telegram / WhatsApp» (другорядна)
   META_PIXEL_ID: ''    // Meta (Facebook/Instagram) Pixel
 };
 
@@ -48,18 +50,23 @@ function startTracking() {
     fbq('init', TRACKING.META_PIXEL_ID); fbq('track', 'PageView');
   }
 }
-// Подія-ліда: канал = call | email | whatsapp | viber | form
-function trackLead(channel) {
+// Подія-ліда. kind = 'form' (відправлена форма) | 'click' (клік по телефону/пошті/месенджеру)
+// В Google Ads основна конверсія «Заявка з сайту» рахується лише для 'form'.
+function trackLead(channel, kind) {
   if (!trackingOn) return;
+  kind = kind || 'form';
   if (window.gtag) {
-    gtag('event', 'generate_lead', { method: channel });
-    if (TRACKING.GADS_ID && TRACKING.GADS_LEAD_LABEL) gtag('event', 'conversion', { send_to: TRACKING.GADS_ID + '/' + TRACKING.GADS_LEAD_LABEL });
+    gtag('event', 'generate_lead', { method: channel, kind: kind });
+    if (TRACKING.GADS_ID) {
+      const label = kind === 'form' ? TRACKING.GADS_LEAD_LABEL : (channel === 'call' ? TRACKING.GADS_CALL_LABEL : TRACKING.GADS_CHAT_LABEL);
+      if (label) gtag('event', 'conversion', { send_to: TRACKING.GADS_ID + '/' + label });
+    }
   }
   if (window.fbq) fbq('track', 'Lead', { channel: channel });
 }
 document.addEventListener('click', (e) => {
   const t = e.target.closest('[data-track]');
-  if (t) trackLead(t.dataset.track);
+  if (t) trackLead(t.dataset.track, 'click');
 });
 
 // Згода на cookie
@@ -94,7 +101,7 @@ form.addEventListener('click', async (e) => {
 
   const text = buildText();
   const channel = btn.dataset.channel;
-  trackLead(channel);
+  if (channel !== 'telegram') trackLead(channel, 'form'); // Telegram рахуємо після успішної відправки
 
   if (channel === 'telegram') {
     btn.disabled = true; status.textContent = 'Надсилаємо...';
@@ -105,6 +112,7 @@ form.addEventListener('click', async (e) => {
         body: JSON.stringify({ name: f.name.value, contact: f.contact.value, message: f.message.value, source: sourceInfo(), website: f.website.value })
       });
       if (!res.ok) throw new Error(res.status);
+      trackLead('telegram', 'form');
       status.textContent = 'Дякуємо! Запит надіслано, ми зв\'яжемося з вами найближчим часом.';
       form.reset();
     } catch (_) {
