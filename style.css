@@ -157,6 +157,10 @@ form .btn { margin-top: 1rem; }
 .send-btns { grid-template-columns: repeat(3, 1fr); }
 .send.tg { grid-column: 1 / -1; padding: 1rem; font-size: 1.05rem; color: #fff; }
 .send.tg[hidden] { display: none; }
+/* Головна кнопка форми: заявка йде напряму через Telegram-бота, месенджер користувачу не потрібен */
+.send.tg { background: var(--accent); color: #111; }
+.send-alt { grid-column: 1 / -1; margin: .35rem 0 0; font-size: .85rem; color: var(--muted); }
+.send-alt[hidden] { display: none; }
 @media (max-width: 420px) { .send-btns { grid-template-columns: 1fr; } }
 
 /* Меню на телефоні */

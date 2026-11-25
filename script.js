@@ -12,7 +12,11 @@ const sourceInfo = () => (window.Analytics ? Analytics.sourceInfo() : '');
 
 const form = document.getElementById('contact-form');
 const status = document.getElementById('form-status');
-if (TELEGRAM_ENDPOINT) form.querySelector('[data-channel=telegram]').hidden = false;
+if (TELEGRAM_ENDPOINT) {
+  form.querySelector('[data-channel=telegram]').hidden = false;
+  const alt = form.querySelector('.send-alt');
+  if (alt) alt.hidden = false;
+}
 
 function buildText() {
   const f = form.elements;
