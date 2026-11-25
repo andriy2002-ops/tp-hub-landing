@@ -8,8 +8,8 @@
     GA4_ID: 'G-4FXM8YJRBP',
     GADS_ID: 'AW-18573284006',
     GADS_LEAD_LABEL: 'DVkOCI2Rn7gdEKalt5hF', // основна конверсія «Заявка з сайту» (форма)
-    GADS_CALL_LABEL: '',                      // необов'язково: другорядна «Клік по телефону»
-    GADS_CHAT_LABEL: '',                      // необов'язково: другорядна «Клік Telegram / WhatsApp / пошта»
+    GADS_CALL_LABEL: 'nW_oCM-psr8dEKalt5hF', // необов'язково: другорядна «Клік по телефону»
+    GADS_CHAT_LABEL: 'ZyZmCNKpsr8dEKalt5hF', // необов'язково: другорядна «Клік Telegram / WhatsApp / пошта»
     META_PIXEL_ID: ''
   };
   const CONSENT_KEY = 'cookie-consent'; // yes | no (назву не змінювати)
